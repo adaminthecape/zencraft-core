@@ -1,0 +1,38 @@
+{
+  "name": "zencraft-core",
+  "version": "1.0.0",
+  "description": "Core library for Zencraft layout system",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "npx vitest",
+    "build": "rimraf ./dist && tsup",
+    "testModule": "npm run build && npx ts-node src/index",
+    "t": "npx ts-node test"
+  },
+  "keywords": [
+    "firebase",
+    "cloud",
+    "database",
+    "json",
+    "storage",
+    "generic"
+  ],
+  "author": "adamf",
+  "license": "ISC",
+  "dependencies": {
+    "@firebase/app": "^0.10.16",
+    "@firebase/auth": "^1.8.1",
+    "@firebase/database": "^1.0.10",
+    "@firebase/firestore": "^4.7.5",
+    "dotenv": "^16.4.5",
+    "mysql2": "^3.12.0",
+    "rimraf": "^6.0.1",
+    "ts-node": "^10.9.2",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2"
+  }
+}
