@@ -90,7 +90,7 @@ export const blockItemFields: FieldData[] = [
   },
 ];
 
-export const itemDefinitionItemFields: FieldData[] = [
+export const archetypeItemFields: FieldData[] = [
   {
     id: 'fc30f92c-c564-4982-90ba-fd32eb2f5eca',
     typeId: KnownItemType.Field,
@@ -128,7 +128,7 @@ export const itemDefinitionItemFields: FieldData[] = [
 ];
 
 export const blockDefinitionItemFields: FieldData[] = [
-  ...itemDefinitionItemFields,
+  ...archetypeItemFields,
   {
     id: '70abafc5-dbc3-496d-a8e7-39d44cb4b29a',
     typeId: KnownItemType.Field,

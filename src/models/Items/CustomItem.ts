@@ -1,9 +1,9 @@
 import { Nullable, UUID } from '../../types/generic';
 import { FieldData } from './Field';
 import { ItemOpts, Item, ItemHandler } from './GenericItem';
-import { ItemDefinitionItem } from '../ItemDefinitions/ItemDefinition';
+import { ArchetypeItem } from '../Archetypes/Archetype';
 import { getCurrentSecond, isPopulatedObject } from '../../utils/tools';
-import { FieldValidator } from '../ItemDefinitions/FieldValidator';
+import { FieldValidator } from '../Archetypes/FieldValidator';
 import { reduceIntoAssociativeArray } from '../../utils/generic';
 
 export type CustomItemOpts = ItemOpts & (
@@ -16,7 +16,7 @@ export type CustomItemOpts = ItemOpts & (
 	 * be definitively loaded before the handler is created.
 	 */
 	{
-		definition: ItemDefinitionItem;
+		definition: ArchetypeItem;
 		fieldDataArray: FieldData[];
 	}
 );

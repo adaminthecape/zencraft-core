@@ -30,8 +30,8 @@ export type OnDirtyFieldFn = (
   value: unknown
 ) => void;
 
-/** Replicated here to avoid circular imports as ItemDefinition extends Item */
-type ItemDefinitionData = {
+/** Replicated here to avoid circular imports as Archetype extends Item */
+type ArchetypeData = {
   id: Nullable<string>;
   name: Nullable<string>;
   itemType: Nullable<string>;
@@ -44,7 +44,7 @@ export type ItemOpts<IItemType = Item> = {
   typeId?: string;
   initialData?: Partial<IItemType>;
   definitionId?: UUID;
-  definition?: ItemDefinitionData;
+  definition?: ArchetypeData;
   onDirtyField?: OnDirtyFieldFn | undefined;
 };
 
@@ -79,7 +79,7 @@ export class ItemHandler<IItemType extends Item = Item> implements Item
   protected isLoaded = false;
   protected data: Partial<IItemType> = {};
   protected onDirtyField: OnDirtyFieldFn | undefined;
-  protected definition: Nullable<ItemDefinitionData>;
+  protected definition: Nullable<ArchetypeData>;
   protected definitionId: Nullable<UUID>;
 
   /**
@@ -151,7 +151,7 @@ export class ItemHandler<IItemType extends Item = Item> implements Item
 
   protected setDefinition(opts: {
     definitionId?: UUID;
-    definition?: ItemDefinitionData;
+    definition?: ArchetypeData;
     overwriteExisting?: boolean;
   })
   {
@@ -223,7 +223,7 @@ export class ItemHandler<IItemType extends Item = Item> implements Item
     }
 
     const definitionData = await this.db.select({
-      itemType: KnownItemType.ItemDefinition,
+      itemType: KnownItemType.Archetype,
       itemId: this.definitionId,
     });
 

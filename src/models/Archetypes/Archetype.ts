@@ -6,13 +6,13 @@ import { DbFilterOperator } from '../Database/DbFilters';
 import { retrieveItemIds, isUuid, reduceIntoAssociativeArray } from '../../utils/generic';
 import { isPopulatedObject } from '../../utils/tools';
 
-export type ItemDefinitionItemOpts = ItemOpts & {
+export type ArchetypeItemOpts = ItemOpts & {
 	fieldsArray?: FieldData[];
   fieldsMap?: Record<string, FieldData>;
   fieldIds?: UUID[];
 };
 
-export type ItemDefinitionItem = Item & {
+export type ArchetypeItem = Item & {
   name: Nullable<string>;
   itemType: Nullable<string>;
   attachedFields: Nullable<UUID[]>;
@@ -20,14 +20,14 @@ export type ItemDefinitionItem = Item & {
 };
 
 // @ts-expect-error
-export class ItemDefinitionHandler<DefinitionType extends ItemDefinitionItem = ItemDefinitionItem>
+export class ArchetypeHandler<DefinitionType extends ArchetypeItem = ArchetypeItem>
   extends ItemHandler<DefinitionType>
-	implements ItemDefinitionItem
+	implements ArchetypeItem
 {
-  public typeId: any = KnownItemType.ItemDefinition;
+  public typeId: any = KnownItemType.Archetype;
   protected fieldsMap?: Record<FieldData['id'], FieldData>;
 
-  public static async getInstance(opts: ItemDefinitionItemOpts): Promise<ItemDefinitionHandler>
+  public static async getInstance(opts: ArchetypeItemOpts): Promise<ArchetypeHandler>
   {
     let fieldIds;
 
@@ -48,14 +48,14 @@ export class ItemDefinitionHandler<DefinitionType extends ItemDefinitionItem = I
       fieldIds = opts.fieldIds;
     }
 
-		const instance = new ItemDefinitionHandler(opts);
+		const instance = new ArchetypeHandler(opts);
 
 		await instance.load();
 
     if(fieldIds)
     {
       instance.setFields({
-        fieldsArray: await ItemDefinitionHandler.loadFields({
+        fieldsArray: await ArchetypeHandler.loadFields({
           db: opts.db,
           fieldIds
         })
@@ -98,14 +98,14 @@ export class ItemDefinitionHandler<DefinitionType extends ItemDefinitionItem = I
     return (results || []) as FieldData[];
   }
 
-	constructor(opts: ItemDefinitionItemOpts)
+	constructor(opts: ArchetypeItemOpts)
   {
     super(opts);
 
     this.setFields(opts);
   }
 
-  public setFields(opts: Omit<ItemDefinitionItemOpts, keyof ItemOpts>)
+  public setFields(opts: Omit<ArchetypeItemOpts, keyof ItemOpts>)
   {
     if(Array.isArray(opts.fieldsArray))
     {
@@ -136,7 +136,7 @@ export class ItemDefinitionHandler<DefinitionType extends ItemDefinitionItem = I
     {
       if(opts?.force || !isPopulatedObject(this.fieldsMap))
       {
-        const foundFields = await ItemDefinitionHandler.loadFields({
+        const foundFields = await ArchetypeHandler.loadFields({
           db: this.db,
           fieldIds: this.attachedFields
         });
@@ -226,7 +226,7 @@ export class ItemDefinitionHandler<DefinitionType extends ItemDefinitionItem = I
     {
       // super.setData({});
 
-			this.typeId = KnownItemType.ItemDefinition;
+			this.typeId = KnownItemType.Archetype;
       this.name = data.name;
       this.itemType = data.itemType;
       this.scopeId = data.scopeId;
@@ -239,7 +239,7 @@ export class ItemDefinitionHandler<DefinitionType extends ItemDefinitionItem = I
 	}
 }
 
-// instantiate ItemDefinition
+// instantiate Archetype
 // it will know its attachedFields
 // validation actions will require fields to be loaded
 // method to validate setting a value using fields map

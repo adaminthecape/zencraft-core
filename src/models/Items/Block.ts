@@ -1,7 +1,7 @@
 import { KnownItemType, Nullable, UUID } from '../../types/generic';
 import { isUuid } from '../../utils/generic';
 import { isPopulatedObject } from '../../utils/tools';
-import { BlockDefinitionItem } from '../ItemDefinitions/BlockDefinition';
+import { BlockDefinitionItem } from '../Archetypes/BlockDefinition';
 import { ItemOpts, Item, ItemHandler } from './GenericItem';
 
 export type BlockItemOpts = ItemOpts;

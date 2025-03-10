@@ -543,7 +543,7 @@ export class FieldValidator
    * It should transform the value if needed, based on the field type
    *  (e.g. if field type is number, but given a number as a string, accept it as a number)
    * Should be able to:
-   * - Set a list of fields on an Item (which extends ItemDefinition)
+   * - Set a list of fields on an Item (which extends Archetype)
    * - Give an object to setData()
    * - Validate all properties in the data with this function
    * - Ensure valid data structure from any starting point, recursively

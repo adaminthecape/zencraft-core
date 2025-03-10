@@ -4,7 +4,7 @@ export type Nullable<T> = T | null | undefined;
 export enum KnownItemType
 {
 	Item = 'Item',
-	ItemDefinition = 'ItemDefinition',
+	Archetype = 'Archetype',
 	CustomItem = 'CustomItem',
 	Field = 'Field',
 	AccessRole = 'AccessRole',

@@ -1,17 +1,17 @@
 import { ItemType, KnownItemType, Nullable, UUID } from '../../types/generic';
-import { ItemDefinitionItemOpts, ItemDefinitionItem, ItemDefinitionHandler } from './ItemDefinition';
+import { ArchetypeItemOpts, ArchetypeItem, ArchetypeHandler } from './Archetype';
 import { isPopulatedObject, isUuid, retrieveItemIds } from '../../utils/generic';
 
-export type BlockDefinitionItemOpts = ItemDefinitionItemOpts & {};
+export type BlockDefinitionItemOpts = ArchetypeItemOpts & {};
 
-export type BlockDefinitionItem = ItemDefinitionItem & {
+export type BlockDefinitionItem = ArchetypeItem & {
   name?: Nullable<string>;
   blockType: Nullable<string>;
   allowedChildBlockTypes?: Nullable<Array<UUID>>;
 };
 
 export class BlockDefinitionHandler
-  extends ItemDefinitionHandler<BlockDefinitionItem>
+  extends ArchetypeHandler<BlockDefinitionItem>
   implements BlockDefinitionItem
 {
   public typeId: ItemType = KnownItemType.BlockDefinition;

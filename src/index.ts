@@ -57,18 +57,18 @@ export * as fields from './models/Items/Field';
  * the data doesn't pass the validation, it will not be saved. All CustomItems
  * must have Fields, which are validated by the FieldValidator class.
  */
-export * as fieldValidation from './models/ItemDefinitions/FieldValidator';
+export * as fieldValidation from './models/Archetypes/FieldValidator';
 
 /**
- * ItemDefinitions are the blueprints for Items. They contain the list of Fields
+ * Archetypes are the blueprints for Items. They contain the list of Fields
  * that an Item must have, as well as other configuration data.
  */
-export * as ItemDefinition from './models/ItemDefinitions/ItemDefinition';
+export * as Archetype from './models/Archetypes/Archetype';
 /**
- * BlockDefinitions are a special kind of ItemDefinition which represents config
+ * BlockDefinitions are a special kind of Archetype which represents config
  * for Blocks. Blocks are the basic components of layouts.
  */
-export * as BlockDefinition from './models/ItemDefinitions/BlockDefinition';
+export * as BlockDefinition from './models/Archetypes/BlockDefinition';
 
 /**
  * CustomItems are Items that are defined by platform admins. They can have any
