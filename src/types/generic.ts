@@ -10,7 +10,7 @@ export enum KnownItemType
 	AccessRole = 'AccessRole',
 	Blueprint = 'Blueprint',
 	Block = 'Block',
-	Module = 'Module',
+	Hub = 'Hub',
 	Page = 'Page',
 }
 

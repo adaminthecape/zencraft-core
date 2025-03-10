@@ -77,11 +77,11 @@ export * as Blueprint from './models/Archetypes/Blueprint';
 export * as CustomItem from './models/Items/CustomItem';
 
 /**
- * Modules, Pages, and Blocks are the necessary components of layouts. Modules
+ * Hubs, Pages, and Blocks are the necessary components of layouts. Hubs
  * are the top-level components, Pages are the second-level components, and
  * Blocks are the lowest-level components.
  */
-export * as Module from './models/Items/Module';
+export * as Hub from './models/Items/Hub';
 export * as Page from './models/Items/Page';
 export * as Block from './models/Items/Block';
 

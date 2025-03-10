@@ -278,7 +278,7 @@ export const fieldFieldsMap: Record<keyof Omit<FieldData, keyof Item>, FieldData
     },
 };
 
-export const moduleItemFields: FieldData[] = [
+export const hubItemFields: FieldData[] = [
   {
     id: 'cf2f9d7f-c9f6-4654-8558-6839202d06e4',
     typeId: KnownItemType.Field,

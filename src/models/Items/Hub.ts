@@ -3,9 +3,9 @@ import { Item, ItemHandler, ItemOpts } from './GenericItem';
 import { isUuid } from '../../utils/uuid';
 import { isPopulatedObject } from '../../utils/tools';
 
-export type ModuleItemOpts = ItemOpts;
+export type HubItemOpts = ItemOpts;
 
-export type ModuleItem = Item & {
+export type HubItem = Item & {
   title: Nullable<string>;
   slug: Nullable<string>;
   pageIds: Nullable<UUID[]>;
@@ -15,22 +15,22 @@ export type ModuleItem = Item & {
 export const REGEX_SLUG = /^[a-z0-9\-]{0,50}$/gi;
 
 // @ts-expect-error
-export class ModuleHandler
-  extends ItemHandler<ModuleItem>
-	implements ModuleItem
+export class HubHandler
+  extends ItemHandler<HubItem>
+	implements HubItem
 {
-	public typeId: any = KnownItemType.Module;
+	public typeId: any = KnownItemType.Hub;
 
-  public static async getInstance(opts: ModuleItemOpts): Promise<ModuleHandler>
+  public static async getInstance(opts: HubItemOpts): Promise<HubHandler>
 	{
-		const instance = new ModuleHandler(opts);
+		const instance = new HubHandler(opts);
 
 		await instance.load();
 
 		return instance;
 	}
 
-	constructor(opts: ModuleItemOpts)
+	constructor(opts: HubItemOpts)
   {
 		super(opts);
 
@@ -99,7 +99,7 @@ export class ModuleHandler
     });
   }
 
-	public getData(): ModuleItem
+	public getData(): HubItem
 	{
 		return {
 			...super.getData(),
@@ -110,7 +110,7 @@ export class ModuleHandler
 		};
 	}
 
-	public setData(data: Partial<ModuleItem>): void
+	public setData(data: Partial<HubItem>): void
 	{
 		if(!isPopulatedObject(data))
 		{
@@ -121,7 +121,7 @@ export class ModuleHandler
     {
       super.setData({});
 
-			this.typeId = KnownItemType.Module;
+			this.typeId = KnownItemType.Hub;
       this.title = data.title;
       this.slug = data.slug;
       this.pageIds = data.pageIds;
