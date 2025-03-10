@@ -51,10 +51,10 @@ export const blockItemFields: FieldData[] = [
   {
     id: '54dde479-6b15-4e08-9a75-4ca90d22bdb9',
     typeId: KnownItemType.Field,
-    key: 'blockDefinitionId',
+    key: 'blueprintId',
     label: 'Block Definition',
     fieldType: FieldType.item,
-    itemType: KnownItemType.BlockDefinition,
+    itemType: KnownItemType.Blueprint,
     isSearchable: true,
   },
   {
@@ -127,7 +127,7 @@ export const archetypeItemFields: FieldData[] = [
   },
 ];
 
-export const blockDefinitionItemFields: FieldData[] = [
+export const blueprintItemFields: FieldData[] = [
   ...archetypeItemFields,
   {
     id: '70abafc5-dbc3-496d-a8e7-39d44cb4b29a',

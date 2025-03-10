@@ -2,21 +2,21 @@ import { ItemType, KnownItemType, Nullable, UUID } from '../../types/generic';
 import { ArchetypeItemOpts, ArchetypeItem, ArchetypeHandler } from './Archetype';
 import { isPopulatedObject, isUuid, retrieveItemIds } from '../../utils/generic';
 
-export type BlockDefinitionItemOpts = ArchetypeItemOpts & {};
+export type BlueprintItemOpts = ArchetypeItemOpts;
 
-export type BlockDefinitionItem = ArchetypeItem & {
+export type BlueprintItem = ArchetypeItem & {
   name?: Nullable<string>;
   blockType: Nullable<string>;
   allowedChildBlockTypes?: Nullable<Array<UUID>>;
 };
 
-export class BlockDefinitionHandler
-  extends ArchetypeHandler<BlockDefinitionItem>
-  implements BlockDefinitionItem
+export class BlueprintHandler
+  extends ArchetypeHandler<BlueprintItem>
+  implements BlueprintItem
 {
-  public typeId: ItemType = KnownItemType.BlockDefinition;
+  public typeId: ItemType = KnownItemType.Blueprint;
 
-  public static async getInstance(opts: BlockDefinitionItemOpts): Promise<BlockDefinitionHandler>
+  public static async getInstance(opts: BlueprintItemOpts): Promise<BlueprintHandler>
   {
     let fieldIds;
 
@@ -39,27 +39,27 @@ export class BlockDefinitionHandler
 
     if(!fieldIds)
     {
-      throw new Error(`Field IDs not found for BlockDefinition ${opts.id}`);
+      throw new Error(`Field IDs not found for Blueprint ${opts.id}`);
     }
 
-    const fieldsArray = await BlockDefinitionHandler.loadFields({
+    const fieldsArray = await BlueprintHandler.loadFields({
       db: opts.db,
       fieldIds
     });
 
     if(!(Array.isArray(fieldsArray) && fieldsArray.length))
     {
-      throw new Error(`Fields not found for BlockDefinition ${opts.id}`);
+      throw new Error(`Fields not found for Blueprint ${opts.id}`);
     }
 
-    const instance = new BlockDefinitionHandler({ ...opts, fieldsArray });
+    const instance = new BlueprintHandler({ ...opts, fieldsArray });
 
 		await instance.load();
 
 		return instance;
   }
 
-	constructor(opts: BlockDefinitionItemOpts)
+	constructor(opts: BlueprintItemOpts)
   {
     super(opts);
   }
@@ -92,12 +92,12 @@ export class BlockDefinitionHandler
     });
   }
 
-	public getData(): BlockDefinitionItem
+	public getData(): BlueprintItem
   {
     // for each field, get its value from data if it exists
 		const data = {
       ...super.getData(),
-      typeId: KnownItemType.BlockDefinition,
+      typeId: KnownItemType.Blueprint,
       blockType: this.blockType,
       allowedChildBlockTypes: this.allowedChildBlockTypes,
     };
@@ -105,7 +105,7 @@ export class BlockDefinitionHandler
     return data;
 	}
 
-  public setData(data: Partial<BlockDefinitionItem>): void
+  public setData(data: Partial<BlueprintItem>): void
 	{
 		if(!isPopulatedObject(data))
 		{
@@ -120,7 +120,7 @@ export class BlockDefinitionHandler
         scopeId: data.scopeId
       });
 
-      this.typeId = KnownItemType.BlockDefinition;
+      this.typeId = KnownItemType.Blueprint;
       this.blockType = data.blockType;
       this.allowedChildBlockTypes = data.allowedChildBlockTypes;
 		}

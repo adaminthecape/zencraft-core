@@ -8,7 +8,7 @@ export enum KnownItemType
 	CustomItem = 'CustomItem',
 	Field = 'Field',
 	AccessRole = 'AccessRole',
-	BlockDefinition = 'BlockDefinition',
+	Blueprint = 'Blueprint',
 	Block = 'Block',
 	Module = 'Module',
 	Page = 'Page',

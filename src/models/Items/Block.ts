@@ -1,7 +1,7 @@
 import { KnownItemType, Nullable, UUID } from '../../types/generic';
 import { isUuid } from '../../utils/generic';
 import { isPopulatedObject } from '../../utils/tools';
-import { BlockDefinitionItem } from '../Archetypes/BlockDefinition';
+import { BlueprintItem } from '../Archetypes/Blueprint';
 import { ItemOpts, Item, ItemHandler } from './GenericItem';
 
 export type BlockItemOpts = ItemOpts;
@@ -22,12 +22,12 @@ export type ChildBlockPosition = {
 
 export type BlockItemCustomProperties = {
   title: Nullable<string>;
-  blockDefinitionId: Nullable<BlockDefinitionItem['id']>;
+  blueprintId: Nullable<BlueprintItem['id']>;
   childBlocks: Nullable<ChildBlockPosition[]>;
   customStyles: Nullable<Record<string, (string | number)>>;
   customClasses: Nullable<string[]>;
   /**
-   * Block config data is defined by the BlockDefinition and could be any object
+   * Block config data is defined by the Blueprint and could be any object
    * matching its definition's field structure.
    */
   config: Nullable<Record<string, unknown>>;
@@ -210,15 +210,15 @@ export class BlockHandler
     });
 	}
 
-  get blockDefinitionId(): Nullable<BlockDefinitionItem['id']>
+  get blueprintId(): Nullable<BlueprintItem['id']>
 	{
-    return this.data.blockDefinitionId;
+    return this.data.blueprintId;
 	}
 
-  set blockDefinitionId(value: unknown)
+  set blueprintId(value: unknown)
   {
     this.setIfValid({
-      key: 'blockDefinitionId',
+      key: 'blueprintId',
       value,
       validator: isUuid
     });
@@ -307,7 +307,7 @@ export class BlockHandler
 		return {
 			...super.getData(),
       title: this.title,
-      blockDefinitionId: this.blockDefinitionId,
+      blueprintId: this.blueprintId,
       childBlocks: this.childBlocks,
       customStyles: this.customStyles,
       customClasses: this.customClasses,
@@ -328,7 +328,7 @@ export class BlockHandler
 
 			this.typeId = KnownItemType.Block;
       this.title = data.title;
-      this.blockDefinitionId = data.blockDefinitionId;
+      this.blueprintId = data.blueprintId;
       this.childBlocks = data.childBlocks;
       this.customStyles = data.customStyles;
       this.customClasses = data.customClasses;

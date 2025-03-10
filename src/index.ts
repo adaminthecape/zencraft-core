@@ -65,10 +65,10 @@ export * as fieldValidation from './models/Archetypes/FieldValidator';
  */
 export * as Archetype from './models/Archetypes/Archetype';
 /**
- * BlockDefinitions are a special kind of Archetype which represents config
+ * Blueprints are a special kind of Archetype which represents config
  * for Blocks. Blocks are the basic components of layouts.
  */
-export * as BlockDefinition from './models/Archetypes/BlockDefinition';
+export * as Blueprint from './models/Archetypes/Blueprint';
 
 /**
  * CustomItems are Items that are defined by platform admins. They can have any
