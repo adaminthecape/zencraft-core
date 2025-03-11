@@ -1,7 +1,7 @@
 import { initializeApp } from '@firebase/app';
 import { getAuth, signInWithEmailAndPassword, User, UserCredential } from '@firebase/auth';
 import { generateUuid } from '../../utils/uuid';
-import { isPopulatedObject } from '../../utils/generic';
+import { isPopulatedObject } from '../../utils/tools';
 import { configDotenv } from 'dotenv';
 
 export type FirebaseConfig = {

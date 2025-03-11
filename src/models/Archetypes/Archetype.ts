@@ -3,8 +3,8 @@ import { FieldData } from '../Items/Field';
 import { ItemOpts, Item, ItemHandler } from '../Items/GenericItem';
 import { GenericDatabase } from '../Database/GenericDatabase';
 import { DbFilterOperator } from '../Database/DbFilters';
-import { retrieveItemIds, isUuid, reduceIntoAssociativeArray } from '../../utils/generic';
-import { isPopulatedObject } from '../../utils/tools';
+import { retrieveItemIds, isUuid } from '../../utils/generic';
+import { isPopulatedObject, reduceIntoAssociativeArray } from '../../utils/tools';
 
 export type ArchetypeItemOpts = ItemOpts & {
 	fieldsArray?: FieldData[];

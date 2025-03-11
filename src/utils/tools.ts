@@ -30,7 +30,7 @@ export function removeUndefined<T = unknown | unknown[]>(inputData: T, depth = 0
 		return inputData;
 	}
 
-	const data = { ...inputData } as Record<string, unknown>;
+	const data = structuredClone(inputData) as Record<string, unknown>;
 
 	Object.keys(data).forEach((key) =>
 	{
@@ -43,8 +43,70 @@ export function removeUndefined<T = unknown | unknown[]>(inputData: T, depth = 0
 	return data as Partial<T>;
 }
 
-
 export function getCurrentSecond(): number
 {
 	return parseInt(`${Date.now()}`.slice(0, 10), 10);
+}
+
+export function dotPick(obj: Record<string, unknown>, path: string)
+{
+	if(!path || typeof path !== 'string') return undefined;
+
+	path = path.replaceAll('[', '.');
+	path = path.replaceAll(']', '.');
+	path = path.replaceAll('..', '.');
+
+	if(path.substring(path.length - 1, path.length) === '.')
+	{
+		path = path.substring(0, path.length - 1);
+	}
+
+	const arr = path.split('.');
+	let res: unknown = obj;
+
+	do
+	{
+		const nextKey = arr.shift();
+
+		if(nextKey)
+		{
+			res = (res as Record<string, unknown>)?.[nextKey];
+		}
+		else
+		{
+			break;
+		}
+	}
+	while(arr.length && isPopulatedObject(res));
+
+	return res;
+}
+
+export function reduceIntoAssociativeArray(
+	source: unknown[],
+	key: string,
+	deleteKey = false
+): Record<string, unknown> | undefined
+{
+	if(Array.isArray(source))
+	{
+		return source.reduce((agg: Record<string, unknown>, item) =>
+		{
+			if(isPopulatedObject(item) && typeof item[key] === 'string')
+			{
+				const clonedItem = { ...item };
+
+				if(deleteKey)
+				{
+					delete clonedItem[key];
+				}
+
+				agg[item[key]] = clonedItem;
+			}
+
+			return agg;
+		}, {});
+	}
+
+	return undefined;
 }

@@ -1,4 +1,5 @@
-import { toNumber, isPopulatedObject } from "../../utils/generic";
+import { toNumber } from "../../utils/generic";
+import { isPopulatedObject } from "../../utils/tools";
 
 export enum DbFilterOperator
 {

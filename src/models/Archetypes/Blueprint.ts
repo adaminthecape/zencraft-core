@@ -1,6 +1,7 @@
 import { KnownItemType, Nullable, UUID } from '../../types/generic';
 import { ArchetypeItemOpts, ArchetypeItem, ArchetypeHandler } from './Archetype';
-import { isPopulatedObject, isUuid, retrieveItemIds } from '../../utils/generic';
+import { isUuid, retrieveItemIds } from '../../utils/generic';
+import { isPopulatedObject } from '../../utils/tools';
 
 export type BlueprintItemOpts = ArchetypeItemOpts;
 

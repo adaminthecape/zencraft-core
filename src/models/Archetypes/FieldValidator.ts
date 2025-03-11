@@ -2,7 +2,8 @@ import { UUID, KnownItemType } from '../../types/generic';
 import { FieldData, Field, FieldType, FieldValidation } from '../Items/Field';
 import { GenericDatabase } from '../Database/GenericDatabase';
 import { isGroupFilter, isSingleFilter } from '../Database/DbFilters';
-import { toNumber, isUuid, reduceIntoAssociativeArray, isPopulatedObject } from '../../utils/generic';
+import { toNumber, isUuid } from '../../utils/generic';
+import { isPopulatedObject, reduceIntoAssociativeArray } from '../../utils/tools';
 
 export type KnownValidationRules = keyof FieldValidation;
 export type ValidationResult = (true | string);
