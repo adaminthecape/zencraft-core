@@ -1,6 +1,4 @@
-import { toNumber } from "../../utils/generic";
-import { isPopulatedObject } from "../../utils/tools";
-import { ItemType } from "../Items/GenericItem";
+import { toNumber, isPopulatedObject } from "../../utils/generic";
 
 export enum DbFilterOperator
 {
@@ -73,7 +71,7 @@ export class DbFilterHandler
 		this.filters = opts.filters || [];
 	}
 
-	public ensureItemTypeFilter(itemType: ItemType | undefined): void
+	public ensureItemTypeFilter(itemType: string | undefined): void
 	{
 		if(!this.filters.some((f) => (
 			isSingleFilter(f) &&
@@ -255,7 +253,12 @@ export class DbFilterHandler
 		const { key, value, operator } = filter;
 
 		const data = DbFilterHandler.getItemData(target);
-		const dataValue = target[key] || data?.[key];
+		let dataValue = target[key] || data?.[key];
+
+		if(key === 'itemId' && !dataValue && target.id)
+		{
+			dataValue = target.id;
+		}
 
 		switch(operator)
 		{

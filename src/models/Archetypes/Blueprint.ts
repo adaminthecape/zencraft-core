@@ -1,4 +1,4 @@
-import { ItemType, KnownItemType, Nullable, UUID } from '../../types/generic';
+import { KnownItemType, Nullable, UUID } from '../../types/generic';
 import { ArchetypeItemOpts, ArchetypeItem, ArchetypeHandler } from './Archetype';
 import { isPopulatedObject, isUuid, retrieveItemIds } from '../../utils/generic';
 
@@ -14,7 +14,7 @@ export class BlueprintHandler
   extends ArchetypeHandler<BlueprintItem>
   implements BlueprintItem
 {
-  public typeId: ItemType = KnownItemType.Blueprint;
+  public typeId: string = KnownItemType.Blueprint;
 
   public static async getInstance(opts: BlueprintItemOpts): Promise<BlueprintHandler>
   {

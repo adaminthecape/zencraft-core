@@ -1,11 +1,9 @@
-import { UUID } from '../../types/generic';
-import { ItemType } from '../Items/GenericItem';
+import { UUID, KnownItemType } from '../../types/generic';
 import { FieldData, Field, FieldType, FieldValidation } from '../Items/Field';
 import { GenericDatabase, GenericDatabaseOpts } from '../Database/GenericDatabase';
 import { DbFilters, isGroupFilter, isSingleFilter } from '../Database/DbFilters';
 import { DbPaginationOpts, PaginatedItemResponse } from '../Database/Pagination';
-import { toNumber, isUuid, reduceIntoAssociativeArray } from '../../utils/generic';
-import { isPopulatedObject } from '../../utils/tools';
+import { toNumber, isUuid, reduceIntoAssociativeArray, isPopulatedObject } from '../../utils/generic';
 
 export type KnownValidationRules = keyof FieldValidation;
 export type ValidationResult = (true | string);
@@ -445,7 +443,7 @@ export class FieldValidator
     }
 
     let fieldsFromDb = await db.selectMultiple({
-      itemType: ItemType.Field,
+      itemType: KnownItemType.Field,
       itemIds: fieldIds
     });
 

@@ -1,6 +1,6 @@
 import { KnownItemType, Nullable, UUID } from '../../types/generic';
 import { FieldData } from '../Items/Field';
-import { ItemOpts, Item, ItemType, ItemHandler } from '../Items/GenericItem';
+import { ItemOpts, Item, ItemHandler } from '../Items/GenericItem';
 import { GenericDatabase } from '../Database/GenericDatabase';
 import { DbFilterOperator } from '../Database/DbFilters';
 import { retrieveItemIds, isUuid, reduceIntoAssociativeArray } from '../../utils/generic';
@@ -79,13 +79,13 @@ export class ArchetypeHandler<DefinitionType extends ArchetypeItem = ArchetypeIt
       return [];
     }
 
-    const { results } = (await opts.db.selectMultiple({
-      itemType: ItemType.Field,
+    const res = (await opts.db.selectMultiple({
+      itemType: KnownItemType.Field,
       filters: [
         {
           key: 'typeId',
           operator: DbFilterOperator.isEqual,
-          value: ItemType.Field
+          value: KnownItemType.Field
         },
         {
           key: 'itemId',
@@ -95,7 +95,7 @@ export class ArchetypeHandler<DefinitionType extends ArchetypeItem = ArchetypeIt
       ]
     })) || {};
 
-    return (results || []) as FieldData[];
+    return (res?.results || []) as FieldData[];
   }
 
 	constructor(opts: ArchetypeItemOpts)

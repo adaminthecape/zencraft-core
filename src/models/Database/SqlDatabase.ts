@@ -1,9 +1,8 @@
 import { GenericDatabase } from './GenericDatabase';
 import { DbFilterOperator, DbFilters } from './DbFilters';
 import { DbPaginationOpts, PaginatedItemResponse } from './Pagination';
-import { Item, ItemHandler } from '../Items/GenericItem';
+import { Item } from '../Items/GenericItem';
 import { isPopulatedObject } from '../../utils/tools';
-import { generateUuid } from '../../utils/uuid';
 
 export type SqlColumnDefinition = {
 	Field: string;
