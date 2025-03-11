@@ -2,6 +2,8 @@ import { DbFilterHandler, DbFilterOperator, DbFilters } from './DbFilters';
 import { DbPaginationOpts, PaginatedItemResponse, PaginationHandler } from './Pagination';
 import { Item } from '../Items/GenericItem';
 import { GenericDatabase, GenericDatabaseOpts } from './GenericDatabase';
+import { toNumber } from '../../utils/generic';
+import { isUuid } from '../../utils/uuid';
 
 export type RamDatabaseOpts = GenericDatabaseOpts;
 export class RamDatabase<
@@ -14,8 +16,14 @@ export class RamDatabase<
 	constructor(opts: RamDatabaseOpts)
 	{
 		super(opts);
-		this.isDebugMode = !!opts.isDebugMode;
-		this.cache = {};
+	}
+
+	public validateItemTypeAndId(opts: {
+		itemId: string;
+		itemType: string;
+	}): boolean
+	{
+		return (isUuid(opts.itemId) && typeof opts.itemType === 'string');
 	}
 
 	public getCacheKey(opts: {
@@ -26,19 +34,6 @@ export class RamDatabase<
 		return `${opts.itemType}:${opts.itemId}`;
 	}
 
-	public getCachedItem(opts: {
-		itemId: string;
-		itemType: string;
-	}): IItemType | undefined
-	{
-		return this.cache[this.getCacheKey(opts)];
-	}
-
-	protected async getDb(): Promise<any | undefined>
-	{
-		return this.cache;
-	}
-
 	public async update(opts: {
 		itemId: string;
 		itemType: string;
@@ -47,7 +42,9 @@ export class RamDatabase<
 		setUpdated?: boolean;
 	})
 	{
-		const item = this.getCachedItem(opts);
+		if(!this.validateItemTypeAndId(opts)) return;
+
+		const item = await this.select(opts);
 
 		if(item)
 		{
@@ -55,11 +52,7 @@ export class RamDatabase<
 		}
 		else
 		{
-			this.cache[this.getCacheKey(opts)] = {
-				...opts.data,
-				id: opts.itemId,
-				typeId: opts.itemType,
-			};
+			await this.insert(opts);
 		}
 	}
 
@@ -68,15 +61,19 @@ export class RamDatabase<
 		itemType: string;
 	})
 	{
-		for(const itemId in opts.items)
+		for await(const itemId of Object.keys(opts.items))
 		{
 			const item = opts.items[itemId];
-
-			this.update({
+			const itemOpts = {
 				itemId,
 				itemType: opts.itemType,
 				data: item
-			});
+			};
+
+			if(this.validateItemTypeAndId(itemOpts))
+			{
+				await this.update(itemOpts);
+			}
 		}
 	}
 
@@ -86,7 +83,13 @@ export class RamDatabase<
 		data: IItemType;
 	}): Promise<void>
 	{
-		this.update(opts);
+		if(!this.validateItemTypeAndId(opts)) return;
+
+		this.cache[this.getCacheKey(opts)] = {
+			...opts.data,
+			id: opts.itemId,
+			typeId: opts.itemType,
+		};
 	}
 
 	public async insertMultiple(opts: {
@@ -94,7 +97,17 @@ export class RamDatabase<
 		items: Record<string, IItemType>;
 	}): Promise<void>
 	{
-		this.updateMultiple(opts);
+		for(const itemId in opts.items)
+		{
+			const item = opts.items[itemId];
+			const itemOpts = {
+				itemId,
+				itemType: opts.itemType,
+				data: item
+			};
+
+			await this.insert(itemOpts);
+		}
 	}
 
 	/** @deprecated */
@@ -103,7 +116,7 @@ export class RamDatabase<
 		itemType: string;
 	}): Promise<IItemType | undefined>
 	{
-		return this.getCachedItem(opts);
+		return this.select(opts);
 	}
 
 	public async select(opts: {
@@ -112,9 +125,11 @@ export class RamDatabase<
 		filters?: DbFilters;
 	}): Promise<IItemType | undefined>
 	{
+		if(!this.validateItemTypeAndId(opts)) return;
+
 		if(!opts.filters)
 		{
-			return this.getCachedItem(opts);
+			return this.cache[this.getCacheKey(opts)];
 		}
 
 		return (await this.selectMultiple({
@@ -133,49 +148,47 @@ export class RamDatabase<
 	{
 		const { itemType, itemIds, filters, pagination } = opts;
 
-		const filterHandler = new DbFilterHandler({ filters });
+		const fh = new DbFilterHandler({ filters });
 
-		filterHandler.updateFilter({
+		fh.updateFilter({
 			key: 'typeId',
 			operator: DbFilterOperator.isEqual,
 			value: itemType,
 		});
 
-		const traverseFilters = DbFilterHandler.traverseFilters;
-
 		if(Array.isArray(itemIds))
 		{
-			filterHandler.updateFilter({
+			fh.updateFilter({
 				key: 'itemId',
 				operator: DbFilterOperator.in,
 				value: itemIds,
 			});
 		}
 
-		// console.log('filters:', filterHandler.filters);
-
-		const filtered = Object.values(this.cache).filter((
+		const filteredData = Object.values(this.cache).filter((
 			obj: any
-		) => traverseFilters(filterHandler.filters, obj));
+		) => DbFilterHandler.traverseFilters(fh.filters, obj));
 
 		const ph = new PaginationHandler({
 			initialValue: pagination,
 		});
 
-		ph.setTotal((filtered || []).length);
+		ph.setTotal((filteredData || []).length);
 
 		if(pagination)
 		{
 			const { page, pageSize } = ph.pagination;
+			const pageNum = toNumber(page);
+			const pageSizeNum = toNumber(pageSize);
 
-			if(typeof page === 'number' && typeof pageSize === 'number')
+			if(pageNum && pageSizeNum)
 			{
-				const results = (filtered || [])
-					.slice((page - 1) * pageSize, page * pageSize) as Array<IItemType>;
+				const results = (filteredData || [])
+					.slice((pageNum - 1) * pageSizeNum, pageNum * pageSizeNum);
 
 				return {
-					results,
-					hasMore: results.length > (page * pageSize),
+					results: results as Array<IItemType>,
+					hasMore: results.length > (pageNum * pageSizeNum),
 					totalItems: ph.pagination.totalRows ?? 0,
 					pagination: {
 						page: ph.pagination.page,
@@ -189,7 +202,7 @@ export class RamDatabase<
 		}
 
 		return {
-			results: (filtered || []) as Array<IItemType>,
+			results: (filteredData || []) as Array<IItemType>,
 			hasMore: false,
 			totalItems: ph.pagination.totalRows ?? 0,
 			pagination: {
@@ -207,6 +220,8 @@ export class RamDatabase<
 		itemType: string;
 	}): Promise<void>
 	{
+		if(!this.validateItemTypeAndId(opts)) return;
+
 		if(this.cache[this.getCacheKey(opts)])
 		{
 			delete this.cache[this.getCacheKey(opts)];
