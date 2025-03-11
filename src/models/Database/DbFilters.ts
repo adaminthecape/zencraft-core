@@ -17,7 +17,7 @@ export enum DbFilterOperator
 export type DbFilter = {
 	key: string;
 	operator: DbFilterOperator;
-	value: any;
+	value: unknown;
 };
 export enum DbFilterGroupType
 {
@@ -44,7 +44,7 @@ export function isSingleFilter(filter: unknown): filter is DbFilter
 		(
 			'operator' in filter &&
 			typeof filter.operator === 'string' &&
-			Object.values(DbFilterOperator).includes(filter.operator as any)
+			Object.values(DbFilterOperator).includes(filter.operator as DbFilterOperator)
 		)
 	);
 }
@@ -102,7 +102,7 @@ export class DbFilterHandler
 
 		const result = filtersToUse.reduce((
 			agg: DbFilters,
-			filter: any
+			filter: unknown
 		) =>
 		{
 			if(isGroupFilter(filter))

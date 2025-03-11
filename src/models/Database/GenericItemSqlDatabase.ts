@@ -54,12 +54,12 @@ export class GenericItemSqlDatabase<
 		if(!opts.customConfig)
 		{
 			this.config = {
-				user: process.env.MYSQL_DB_USER,
-				password: process.env.MYSQL_DB_PASS,
-				host: process.env.MYSQL_DB_HOST,
-				port: process.env.MYSQL_DB_PORT,
-				database: process.env.MYSQL_DB_NAME
-			} as any;
+				user: process.env.MYSQL_DB_USER as string,
+				password: process.env.MYSQL_DB_PASS as string,
+				host: process.env.MYSQL_DB_HOST as string,
+				port: parseInt(process.env.MYSQL_DB_PORT as string, 10),
+				database: process.env.MYSQL_DB_NAME as string,
+			};
 		}
 		else
 		{
@@ -67,7 +67,7 @@ export class GenericItemSqlDatabase<
 		}
 	}
 
-	public getFormattedQuery(query: string, params: any[]): string | undefined
+	public getFormattedQuery(query: string, params: unknown[]): string | undefined
 	{
 		if(!this.connection)
 		{
@@ -96,17 +96,19 @@ export class GenericItemSqlDatabase<
 			return { success: false, error: `Table name "${tableName}" invalid` };
 		}
 
-		const columns = (await this.query(
+		const tableColumns = await this.query(
 			`SHOW COLUMNS FROM ??`,
 			[tableName]
-		))
-			?.map((colDef: SqlColumnDefinition) => colDef?.Field)
-			?.filter((f: string) => f);
+		);
 
-		if(!columns)
+		if(!(Array.isArray(tableColumns) && tableColumns.length))
 		{
 			return { success: false, error: 'No columns' };
 		}
+
+		const columns = tableColumns
+			?.map((colDef: SqlColumnDefinition) => colDef?.Field)
+			?.filter((f: string) => f);
 
 		const matches = columnNames.reduce((agg, colToCheck) =>
 		{
@@ -212,7 +214,7 @@ export class GenericItemSqlDatabase<
 					itemId,
 					itemType,
 					JSON.stringify(dataToSave),
-					(data as any).createdBy || 'unknown',
+					(data as Record<string, unknown>).createdBy || 'unknown',
 					getCurrentSecond(),
 					getCurrentSecond()
 				]
@@ -497,14 +499,14 @@ export class GenericItemSqlDatabase<
 			const totalItems = await this.query1(
 				getQuery('COUNT(itemId)'),
 				['itemsPublished', ...queryParams],
-			);
+			) as number | undefined;
 
 			if(totalItems && Number.isInteger(totalItems))
 			{
 				response.totalItems = totalItems;
 				pagination.totalRows = totalItems;
 
-				if(limit && ((offset ?? 0) < totalItems))
+				if(limit && ((offset ?? 0) < (totalItems ?? 0)))
 				{
 					response.hasMore = true;
 				}
@@ -518,15 +520,20 @@ export class GenericItemSqlDatabase<
 			['itemsPublished', ...queryParams],
 			(data) =>
 			{
-				if(Array.isArray(data?.[0]))
+				if(Array.isArray(data) && Array.isArray(data[0]))
 				{
-					response.results = data[0];
+					response.results = (data as IItemType[][])[0];
 				}
 			}
 		);
 
-		response.results = response.results.map((row: any) =>
+		response.results = response.results.map((row) =>
 		{
+			if(!isPopulatedObject(row))
+			{
+				return undefined;
+			}
+
 			if(row?.[idField])
 			{
 				let itemData = {
@@ -537,7 +544,7 @@ export class GenericItemSqlDatabase<
 					updatedAt: row.updatedAt
 				};
 
-				if(row.jsonData)
+				if(row.jsonData && typeof row.jsonData === 'string')
 				{
 					try
 					{
@@ -559,7 +566,7 @@ export class GenericItemSqlDatabase<
 
 				return itemData;
 			}
-		}) as Array<IItemType>;
+		}).filter((entry) => entry) as Array<IItemType>;
 
 		return response;
 	}

@@ -17,7 +17,7 @@ export class GenericDatabase<
 		this.isDebugMode = !!opts.isDebugMode;
 	}
 
-	protected async getDb(): Promise<any | undefined>
+	protected async getDb(): Promise<unknown | undefined>
 	{
 		return undefined;
 	}
@@ -25,7 +25,7 @@ export class GenericDatabase<
 	/** @deprecated */
 	public async watch(opts: {
 		rootPath: string;
-		withResult: (result: any) => void;
+		withResult: (result: unknown) => void;
 	})
 	{
 		//

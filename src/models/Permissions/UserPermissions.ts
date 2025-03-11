@@ -144,7 +144,7 @@ export class UserPermissions
 		}
 
 		const wheres: string[] = [];
-		const params: any[] = [];
+		const params: unknown[] = [];
 
 		if(Array.isArray(filters.scope))
 		{
@@ -448,7 +448,7 @@ export class UserPermissions
 
 		const fields: string[] = [];
 		const wheres: string[] = [];
-		const params: any[] = [];
+		const params: unknown[] = [];
 
 		fields.push('status = ?');
 		params.push(PermissionStatus.ACTIVE);
@@ -493,7 +493,7 @@ export class UserPermissions
 	{
 		const fields: string[] = [];
 		const wheres: string[] = [];
-		const params: any[] = [];
+		const params: unknown[] = [];
 
 		fields.push('status = ?');
 		params.push(PermissionStatus.ACTIVE);
@@ -587,7 +587,7 @@ export class UserPermissions
 		}
 
 		const wheres: string[] = [];
-		const params: any[] = [];
+		const params: unknown[] = [];
 
 		wheres.push('userId = ?');
 		params.push(this.targetUserId);

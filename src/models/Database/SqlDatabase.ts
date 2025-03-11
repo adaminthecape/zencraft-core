@@ -54,12 +54,12 @@ export class SqlDatabase<
 		if(!opts.customConfig)
 		{
 			this.config = {
-				user: process.env.MYSQL_DB_USER,
-				password: process.env.MYSQL_DB_PASS,
-				host: process.env.MYSQL_DB_HOST,
-				port: process.env.MYSQL_DB_PORT,
-				database: process.env.MYSQL_DB_NAME
-			} as any;
+				user: process.env.MYSQL_DB_USER as string,
+				password: process.env.MYSQL_DB_PASS as string,
+				host: process.env.MYSQL_DB_HOST as string,
+				port: parseInt(process.env.MYSQL_DB_PORT as string, 10),
+				database: process.env.MYSQL_DB_NAME as string,
+			};
 		}
 		else
 		{
@@ -113,7 +113,7 @@ export class SqlDatabase<
 		this.isConnected = false;
 	}
 
-	public getFormattedQuery(query: string, params: any[]): string | undefined
+	public getFormattedQuery(query: string, params: unknown[]): string | undefined
 	{
 		if(!this.connection)
 		{
@@ -133,9 +133,9 @@ export class SqlDatabase<
 
 	public async query(
 		queryString: string,
-		params: any[] = [],
-		returnValueFunction?: (data: any) => any
-	): Promise<any>
+		params: unknown[] = [],
+		returnValueFunction?: (data: unknown) => unknown
+	): Promise<unknown>
 	{
 		if(!this.connection)
 		{
@@ -192,7 +192,7 @@ export class SqlDatabase<
 		}
 	}
 
-	public async query1(queryString: string, params: any[] = [])
+	public async query1(queryString: string, params: unknown[] = [])
 	{
 		if(!queryString.includes('LIMIT'))
 		{
@@ -216,7 +216,7 @@ export class SqlDatabase<
 		});
 	}
 
-	public async query1r(queryString: string, params: any[] = [])
+	public async query1r(queryString: string, params: unknown[] = [])
 	{
 		if(!queryString.includes('LIMIT'))
 		{
@@ -329,7 +329,10 @@ export class SqlDatabase<
 		}, {
 			validCols: [],
 			invalidCols: []
-		} as any);
+		} as {
+			validCols: string[];
+			invalidCols: string[];
+		});
 
 		if(!validCols.includes('id'))
 		{
@@ -375,7 +378,7 @@ export class SqlDatabase<
 
 		const fields: string[] = [];
 		const values: string[] = [];
-		const params: any[] = [];
+		const params: unknown[] = [];
 
 		fields.push('id');
 		values.push('?');
