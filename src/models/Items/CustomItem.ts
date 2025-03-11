@@ -162,7 +162,14 @@ export class CustomHandler
 			return;
 		}
 
-		const baseKeys = ['id', 'typeId', 'createdBy', 'createdAt', 'updatedAt'];
+		const baseKeys = [
+			'id',
+			'typeId',
+			'createdBy',
+			'createdAt',
+			'updatedAt',
+			'definitionId',
+		];
 
 		try
 		{
@@ -199,6 +206,11 @@ export class CustomHandler
 			if(!this.createdAt)
 			{
 				this.createdAt = now; 
+			}
+
+			if(data.definitionId)
+			{
+				this.definitionId = data.definitionId as UUID;
 			}
 		}
 		catch(e)
