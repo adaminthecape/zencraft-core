@@ -681,7 +681,10 @@ export class UserPermissions
 	public async validateMultiple(
 		permissionTypes: PermissionType[],
 		scope?: UUID
-	): Promise<any>
+	): Promise<{
+		success: boolean;
+		results: Partial<Record<PermissionType, boolean>>;
+	}>
 	{
 		const resultMap: Partial<Record<PermissionType, boolean>> = {};
 

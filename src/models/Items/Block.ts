@@ -35,12 +35,14 @@ export type BlockItemCustomProperties = {
 
 export type BlockItem = Item & BlockItemCustomProperties;
 
-// @ts-expect-error
+export type BlockPositionKey = `pos-${number}-${number}`;
+
+// @ts-expect-error getInstance() return type is unexpected but not incorrect
 export class BlockHandler
 	extends ItemHandler<BlockItem>
 	implements BlockItem
 {
-	public typeId: any = KnownItemType.Block;
+	public typeId: string = KnownItemType.Block;
 
 	public static async getInstance(opts: BlockItemOpts): Promise<BlockHandler>
 	{
@@ -107,7 +109,7 @@ export class BlockHandler
 
 	public static getPositionsMap(
 		childBlocks: Array<ChildBlockPosition>
-	): Record<`pos-${number}-${number}`, string>
+	): Record<BlockPositionKey, string>
 	{
 		if(!(Array.isArray(childBlocks) && childBlocks.length))
 		{
@@ -115,7 +117,7 @@ export class BlockHandler
 		}
 
 		return childBlocks.reduce((
-			agg: Record<`pos-${number}-${number}`, string>,
+			agg: Record<BlockPositionKey, string>,
 			pos
 		) =>
 		{
@@ -129,7 +131,7 @@ export class BlockHandler
 	}
 
 	public static mapPositionsToArray(
-		positions: Record<`pos-${number}-${number}`, string>
+		positions: Record<BlockPositionKey, string>
 	): Array<ChildBlockPosition>
 	{
 		if(!isPopulatedObject(positions))
@@ -145,7 +147,7 @@ export class BlockHandler
 			const [, col, row] = posKey.split('-');
 
 			agg.push({
-				id: (positions as any)[posKey],
+				id: positions[posKey as BlockPositionKey],
 				col: parseInt(col, 10),
 				row: parseInt(row, 10),
 			});
@@ -177,16 +179,16 @@ export class BlockHandler
 
 		// keeping whatever column is selected, increment row until empty row found
 
-		let pos = (positions as any)[`pos-${col}-${row}`];
+		let pos = positions[`pos-${col}-${row}`];
 
 		// increment the row until we find an empty one
 		while(pos && (row < 100))
 		{
 			row += 1;
-			pos = (positions as any)[`pos-${col}-${row}`];
+			pos = positions[`pos-${col}-${row}`];
 		}
 
-		(positions as any)[`pos-${col}-${row}`] = id;
+		positions[`pos-${col}-${row}`] = id;
 
 		return BlockHandler.mapPositionsToArray(positions);
 	}

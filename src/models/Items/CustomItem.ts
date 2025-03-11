@@ -31,12 +31,12 @@ export type CustomItem = Item & {
 	[key: string]: Nullable<unknown>;
 };
 
-// @ts-expect-error
+// @ts-expect-error getInstance() return type is unexpected but not incorrect
 export class CustomHandler
 	extends ItemHandler<CustomItem>
 	implements CustomItem
 {
-	public typeId: any = 'Custom';
+	public typeId: string = 'Custom';
 	protected definitionId: UUID;
 	protected validator: FieldValidator;
 	protected fieldDataArray: (FieldData[]) | null;
@@ -96,12 +96,12 @@ export class CustomHandler
 
 		if(value === null)
 		{
-			(this.data as any)[key] = value;
+			(this.data as Record<string, unknown>)[key] = value;
 			this.markDirty(key);
 		}
 		else if(opts.validator(value))
 		{
-			(this.data as any)[key] = value;
+			(this.data as Record<string, unknown>)[key] = value;
 			this.markDirty(key);
 		}
 		else if(typeof value !== 'undefined')
@@ -132,7 +132,7 @@ export class CustomHandler
 			key: string
 		) =>
 		{
-			agg[key] = (this.data as any)[key];
+			agg[key] = (this.data as Record<string, unknown>)[key];
 
 			return agg;
 		}, {});

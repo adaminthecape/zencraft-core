@@ -1,6 +1,8 @@
 import { initializeApp } from '@firebase/app';
-import { getAuth, signInWithEmailAndPassword, User } from '@firebase/auth';
+import { getAuth, signInWithEmailAndPassword, User, UserCredential } from '@firebase/auth';
 import { generateUuid } from '../../utils/uuid';
+import { isPopulatedObject } from '../../utils/generic';
+import { configDotenv } from 'dotenv';
 
 export type FirebaseConfig = {
 	apiKey: string;
@@ -16,8 +18,8 @@ export type UserCredentials = {
 	password: string;
 };
 export type UserAuth = {
-	accessToken: string;
-	expires: number;
+	accessToken: string | undefined;
+	expires: number | undefined;
 };
 export type FirebaseAuthOpts = {
 	userAccount: UserCredentials;
@@ -29,12 +31,12 @@ export class FirebaseAuth
 {
 	private isDebugMode = false;
 	private userAccount?: UserCredentials;
-	private user?: any;
+	private user?: User;
 	public isInitialised: boolean;
 	public isAuthorising: boolean;
-	private authWaitInterval: any = undefined;
+	private authWaitInterval: ReturnType<typeof setInterval> | undefined;
 	private app: any;
-	private token: any;
+	private token: string | undefined;
 	private config: FirebaseConfig;
 	private instanceDebugId: string = generateUuid().split('-')[0];
 
@@ -53,7 +55,7 @@ export class FirebaseAuth
 		}
 		else
 		{
-			require('dotenv').config();
+			configDotenv();
 
 			this.config = {
 				apiKey: process.env.FIREBASE_API_KEY,
@@ -72,10 +74,15 @@ export class FirebaseAuth
 		console.log(`FirebaseAuth ${this.instanceDebugId}:`, ...msgs);
 	}
 
-	private validateCredentials(credentials: any)
+	private validateCredentials(credentials: unknown)
 	{
 		try
 		{
+			if(!isPopulatedObject(credentials))
+			{
+				return false;
+			}
+
 			if(!credentials)
 			{
 				throw new Error('No credentials found.');
@@ -86,7 +93,10 @@ export class FirebaseAuth
 				throw new Error('Access token missing or invalid.');
 			}
 
-			if(credentials.expires && credentials.expires < Date.now())
+			if(
+				typeof credentials.expires === 'number' &&
+				(credentials.expires < Date.now())
+			)
 			{
 				throw new Error('Access token is expired.');
 			}
@@ -118,7 +128,7 @@ export class FirebaseAuth
 		return new Promise((resolve, reject) =>
 		{
 			signInWithEmailAndPassword(auth, user.email, user.password)
-				.then((userCredential: any) =>
+				.then((userCredential: UserCredential) =>
 				{
 					console.log(`logged in as ${user.email}`);
 					// Signed in

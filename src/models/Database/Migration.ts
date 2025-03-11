@@ -6,7 +6,7 @@ export type MigrationHandlerOpts = {
 	db: SqlDatabase;
 };
 
-export type MigrationHandlerData = {};
+export type MigrationHandlerData = Record<string, unknown>;
 
 export type SuccessResponse = {
 	success: boolean;

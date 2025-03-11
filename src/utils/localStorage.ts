@@ -5,7 +5,7 @@
  * @param name
  * @param data
  */
-export function saveToLocalStorage(name: string, data: any) {
+export function saveToLocalStorage(name: string, data: unknown) {
   const validName = (typeof name === 'string' && name) ? name : undefined;
 
   if (!validName) {
@@ -23,7 +23,7 @@ export function saveToLocalStorage(name: string, data: any) {
  * Get an item from local storage. Returns the string if it cannot be parsed, unless forceObject is true.
  * @param name - local storage key to fetch
  * @param forceObject - `true` to return undefined when parsing as object fails
- * @returns {string|any}
+ * @returns {string|unknown}
  */
 export function getFromLocalStorage(
   name: string,
@@ -58,11 +58,11 @@ export function getFromLocalStorage(
  * @param name
  * @param data
  */
-export function saveToLocalStorageArray(name: string, data: any) {
+export function saveToLocalStorageArray(name: string, data: unknown) {
   const existingData = getFromLocalStorage(name) || [];
 
   if (
-    !existingData.some((item: any) => {
+    !existingData.some((item: unknown) => {
       let itemComp;
 
       try {

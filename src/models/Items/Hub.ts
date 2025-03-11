@@ -14,12 +14,12 @@ export type HubItem = Item & {
 
 export const REGEX_SLUG = /^[a-z0-9\-]{0,50}$/gi;
 
-// @ts-expect-error
+// @ts-expect-error getInstance() return type is unexpected but not incorrect
 export class HubHandler
 	extends ItemHandler<HubItem>
 	implements HubItem
 {
-	public typeId: any = KnownItemType.Hub;
+	public typeId: string = KnownItemType.Hub;
 
 	public static async getInstance(opts: HubItemOpts): Promise<HubHandler>
 	{

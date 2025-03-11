@@ -19,12 +19,12 @@ export type ArchetypeItem = Item & {
   scopeId: Nullable<UUID>;
 };
 
-// @ts-expect-error
+// @ts-expect-error getInstance() return type is unexpected but not incorrect
 export class ArchetypeHandler<DefinitionType extends ArchetypeItem = ArchetypeItem>
   extends ItemHandler<DefinitionType>
 	implements ArchetypeItem
 {
-  public typeId: any = KnownItemType.Archetype;
+  public typeId: string = KnownItemType.Archetype;
   protected fieldsMap?: Record<FieldData['id'], FieldData>;
 
   public static async getInstance(opts: ArchetypeItemOpts): Promise<ArchetypeHandler>

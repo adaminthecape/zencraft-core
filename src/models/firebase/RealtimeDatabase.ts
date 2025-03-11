@@ -1,10 +1,10 @@
 import { FirebaseAuth, FirebaseAuthOpts } from './FirebaseAuth';
-import { collection, getFirestore, doc, addDoc, setDoc, initializeFirestore, getDoc, query, where, or, and, QueryCompositeFilterConstraint, QueryConstraint, getDocs, deleteDoc } from '@firebase/firestore';
+import { collection, getFirestore, doc, addDoc, setDoc, initializeFirestore, getDoc, query, where, or, and, QueryCompositeFilterConstraint, QueryConstraint, getDocs, deleteDoc, WhereFilterOp } from '@firebase/firestore';
 import { UUID } from '../../types/generic';
 import { FirebaseApp } from '@firebase/app';
 import { Item } from '../Items/GenericItem';
 import { GenericDatabase } from '../Database/GenericDatabase';
-import { DbFilters, isGroupFilter } from '../Database/DbFilters';
+import { DbFilterOperator, DbFilters, isGroupFilter } from '../Database/DbFilters';
 import { isPopulatedObject, removeUndefined } from '../../utils/tools';
 import { DbPaginationOpts, PaginatedItemResponse } from '../Database/Pagination';
 
@@ -163,7 +163,7 @@ export class FirebaseRTDB extends GenericDatabase
 	/** @deprecated */
 	public async watch(opts: {
 		rootPath: string;
-		withResult: (result: any) => void;
+		withResult: (result: unknown) => void;
 	})
 	{
 		// const { rootPath, withResult } = opts;
@@ -223,7 +223,7 @@ export class FirebaseRTDB extends GenericDatabase
 			doc(dbInstance, itemType, itemId, ...path.split('.')) :
 			doc(dbInstance, itemType, itemId);
 
-		await setDoc<any, any>(docRef, dataToUpdate);
+		await setDoc<unknown, any>(docRef, dataToUpdate);
 	}
 
 	public async insert<T = unknown>(opts: {
@@ -385,7 +385,7 @@ export class FirebaseRTDB extends GenericDatabase
 					return [
 						where(
 							filter.key,
-							filter.operator as any,
+							filter.operator as WhereFilterOp,
 							valueToUse
 						)
 					];
@@ -406,9 +406,13 @@ export class FirebaseRTDB extends GenericDatabase
 
 		const results: Record<string, T> = {};
 
-		qSnap.forEach((doc: any) =>
+		qSnap.forEach((doc: unknown) =>
 		{
-			if(typeof doc.id === 'string')
+			if(
+				isPopulatedObject(doc) &&
+				typeof doc.id === 'string' &&
+				typeof doc.data === 'function'
+			)
 			{
 				results[doc.id] = { ...doc.data() };
 			}

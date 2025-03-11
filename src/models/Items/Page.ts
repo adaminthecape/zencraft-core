@@ -11,12 +11,12 @@ export type PageItem = Item & {
 	blockIds: Nullable<UUID[]>;
 };
 
-// @ts-expect-error
+// @ts-expect-error getInstance() return type is unexpected but not incorrect
 export class PageHandler
 	extends ItemHandler<PageItem>
 	implements PageItem
 {
-	public typeId: any = KnownItemType.Page;
+	public typeId: string = KnownItemType.Page;
 
 	public static async getInstance(opts: PageItemOpts): Promise<PageHandler>
 	{

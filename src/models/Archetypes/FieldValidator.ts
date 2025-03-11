@@ -458,7 +458,7 @@ export class FieldValidator
 		) = reduceIntoAssociativeArray(
 			(fieldsFromDb.results) || [],
 			'id'
-		);
+		) as Record<string, FieldData>;
 
 		fieldDataArray.forEach((f) =>
 		{
@@ -751,8 +751,6 @@ export class FieldValidator
 		// evaluate rules, return the first failure
 		for(const ruleName of rules)
 		{
-			let result;
-
 			const validatorName = `validate${ruleName.slice(0, 1).toUpperCase()
 				}${ruleName.slice(1)
 				}`;
@@ -767,7 +765,7 @@ export class FieldValidator
 				continue;
 			}
 
-			result = validator(payload);
+			const result = validator(payload);
 
 			if(result !== true)
 			{

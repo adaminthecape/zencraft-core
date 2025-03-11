@@ -25,7 +25,7 @@ export class DebugTools
 			.pop() || '';
 	}
 
-	public $log(...msgs: any[])
+	public $log(...msgs: unknown[])
 	{
 		console.log('stack:');
 		console.log(`LOG: ${this.instanceId}${this.instanceType ? ` (${this.instanceType})` : ''

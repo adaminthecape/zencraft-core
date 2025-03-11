@@ -14,7 +14,7 @@ export function openInBrowser(link: string)
  * Copy text or objects to the clipboard.
  * @param value
  */
-export function copyToClipboard(value: any)
+export function copyToClipboard(value: unknown)
 {
 	if(Array.isArray(value))
 	{
@@ -24,7 +24,7 @@ export function copyToClipboard(value: any)
 		navigator.clipboard.writeText(JSON.stringify(value));
 	} else
 	{
-		navigator.clipboard.writeText(value);
+		navigator.clipboard.writeText(`${value}`);
 	}
 }
 
@@ -44,7 +44,7 @@ export function padLeft(
 	return str;
 }
 
-export function loopToNextInArray<T = any>(
+export function loopToNextInArray<T = unknown[]>(
 	currentVal: T,
 	arr: T[],
 	offset = 0
@@ -102,13 +102,11 @@ export function reduceIntoAssociativeArray(
 	source: unknown[],
 	key: string,
 	deleteKey = false
-)
+): Record<string, unknown> | undefined
 {
-	let res;
-
-	try
+	if(Array.isArray(source))
 	{
-		res = source.reduce((agg, item) =>
+		return source.reduce((agg: Record<string, unknown>, item) =>
 		{
 			if(isPopulatedObject(item) && typeof item[key] === 'string')
 			{
@@ -119,19 +117,14 @@ export function reduceIntoAssociativeArray(
 					delete clonedItem[key];
 				}
 
-				(agg as Record<string, unknown>)[item[key]] = clonedItem;
+				agg[item[key]] = clonedItem;
 			}
 
 			return agg;
 		}, {});
-	} catch(e)
-	{
-		console.warn(e);
-
-		res = source;
 	}
 
-	return res;
+	return undefined;
 }
 
 function isNumber(value: unknown): value is number
@@ -373,10 +366,11 @@ export function uniq<T>(arr: T[], prop?: string): T[]
 	{
 		return arr.reduce((agg, item) =>
 		{
-			if(isPopulatedObject(item) && (prop in (item as any)))
+			if(isPopulatedObject(item) && (prop in item))
 			{
 				if(!agg.some((foundItem) => (
-					(foundItem as any)[prop] === (item as any)[prop]
+					isPopulatedObject(foundItem) &&
+					foundItem[prop] === item[prop]
 				)))
 				{
 					agg.push(item);
@@ -398,34 +392,27 @@ export function uniq<T>(arr: T[], prop?: string): T[]
 	}, [] as T[]);
 }
 
-export function deepMerge(source: unknown, target: unknown): any
+export function deepMerge(
+	source: unknown,
+	target: unknown
+): Record<string, unknown> | undefined
 {
-	if(Array.isArray(source) && Array.isArray(target))
-	{
-		return [...source, ...target];
-	}
-
 	if(isPopulatedObject(source) && isPopulatedObject(target))
 	{
 		const allKeys = uniq([
-			...Object.keys(source as any),
-			...Object.keys(target as any)
+			...Object.keys(source),
+			...Object.keys(target)
 		]);
 
 		return allKeys.reduce((agg, key) =>
 		{
-			agg[key] = deepMerge((source as any)[key], (target as any)[key]);
+			agg[key] = deepMerge(source[key], target[key]);
 
 			return agg;
-		}, {} as any);
+		}, {} as Record<string, unknown>);
 	}
 
-	if(source && target)
-	{
-		return (source as any) + (target as any);
-	}
-
-	return source || target;
+	return [source, target].find(isPopulatedObject);
 }
 
 export const uuidRegex = (
