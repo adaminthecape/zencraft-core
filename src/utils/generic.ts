@@ -1,233 +1,329 @@
 export type UUID = `${string}-${string}-${string}-${string}-${string}`;
 
-export function getAppBasePath() {
-  return undefined;
+export function getAppBasePath()
+{
+	return undefined;
 }
 
-export function openInBrowser(link: string) {
-  window.open(link, '_blank');
+export function openInBrowser(link: string)
+{
+	window.open(link, '_blank');
 }
 
 /**
  * Copy text or objects to the clipboard.
  * @param value
  */
-export function copyToClipboard(value: any) {
-  if (Array.isArray(value)) {
-    navigator.clipboard.writeText(value.join(', '));
-  } else if (value && typeof value === 'object') {
-    navigator.clipboard.writeText(JSON.stringify(value));
-  } else {
-    navigator.clipboard.writeText(value);
-  }
+export function copyToClipboard(value: any)
+{
+	if(Array.isArray(value))
+	{
+		navigator.clipboard.writeText(value.join(', '));
+	} else if(value && typeof value === 'object')
+	{
+		navigator.clipboard.writeText(JSON.stringify(value));
+	} else
+	{
+		navigator.clipboard.writeText(value);
+	}
 }
 
 export function padLeft(
-  str: string | number,
-  padChar: string,
-  totalLength: number
-) {
-  str = str.toString();
+	str: string | number,
+	padChar: string,
+	totalLength: number
+)
+{
+	str = str.toString();
 
-  while (str.length < totalLength) {
-    str = `${padChar}${str}`;
-  }
+	while(str.length < totalLength)
+	{
+		str = `${padChar}${str}`;
+	}
 
-  return str;
+	return str;
 }
 
 export function loopToNextInArray<T = any>(
-  currentVal: T,
-  arr: T[],
-  offset = 0
-) {
-  if (!arr?.length) return undefined;
+	currentVal: T,
+	arr: T[],
+	offset = 0
+)
+{
+	if(!arr?.length) return undefined;
 
-  const currentIndex = arr.findIndex((x) => x === currentVal);
+	const currentIndex = arr.findIndex((x) => x === currentVal);
 
-  if (currentIndex < 0) return arr[0];
+	if(currentIndex < 0) return arr[0];
 
-  const targetIndex = (currentIndex + offset + 1) % arr.length;
+	const targetIndex = (currentIndex + offset + 1) % arr.length;
 
-  return arr[targetIndex];
+	return arr[targetIndex];
 }
 
 /**
  * Log data to the console for debugging. Adds some nice formatting, too.
  * @param msgs
  */
-export function consoleDebug(...msgs: any[]): void
+export function consoleDebug(...msgs: unknown[]): void
 {
-  const trace = new Error().stack;
-  const messages = Array.isArray(msgs) ? msgs.filter((m) =>
-    ['string', 'number', 'boolean'].includes(typeof m)) : msgs;
-  const objects = Array.isArray(msgs) ? msgs.filter((m) => m && typeof m === 'object') : [];
+	const trace = new Error().stack;
+	const messages = Array.isArray(msgs) ? msgs.filter((m) =>
+		['string', 'number', 'boolean'].includes(typeof m)) : msgs;
+	const objects = Array.isArray(msgs) ? msgs.filter((m) => m && typeof m === 'object') : [];
 
-  console.log(`>> ${trace?.split('\n')[2].split('at ').pop() }`);
-  console.log(...messages);
+	console.log(`>> ${trace?.split('\n')[2].split('at ').pop()}`);
+	console.log(...messages);
 
-  if(objects?.length)
-  {
-    objects.forEach((object) =>
-    {
-      console.log(object);
-    });
+	if(objects?.length)
+	{
+		objects.forEach((object) =>
+		{
+			console.log(object);
+		});
 
-    console.log('>> END');
-  }
+		console.log('>> END');
+	}
 }
 
 export function tryParseAsArray<T>(input: string): Array<T>
 {
-  try
-  {
-    return JSON.parse(input);
-  }
-  catch(e)
-  {
-    return [];
-  }
+	try
+	{
+		return JSON.parse(input);
+	}
+	catch(e)
+	{
+		return [];
+	}
 }
 
 export function reduceIntoAssociativeArray(
-  source: any[],
-  key: string,
-  deleteKey = false
+	source: unknown[],
+	key: string,
+	deleteKey = false
 )
 {
-  let res;
+	let res;
 
-  try
-  {
-    res = source.reduce((agg, item) =>
-    {
-      if(item && item[key])
-      {
-        const clonedItem = { ...item };
+	try
+	{
+		res = source.reduce((agg, item) =>
+		{
+			if(isPopulatedObject(item) && typeof item[key] === 'string')
+			{
+				const clonedItem = { ...item };
 
-        if(deleteKey)
-        {
-          delete clonedItem[key];
-        }
+				if(deleteKey)
+				{
+					delete clonedItem[key];
+				}
 
-        agg[item[key]] = clonedItem;
-      }
+				(agg as Record<string, unknown>)[item[key]] = clonedItem;
+			}
 
-      return agg;
-    }, {});
-  } catch(e)
-  {
-    console.warn(e);
+			return agg;
+		}, {});
+	} catch(e)
+	{
+		console.warn(e);
 
-    res = source;
-  }
+		res = source;
+	}
 
-  return res;
+	return res;
 }
 
-export function stringSort(arr: any[], prop: string, inverse: boolean)
+function isNumber(value: unknown): value is number
 {
-  arr.sort((a, b) =>
-  {
-    if(a[prop] < b[prop])
-    {
-      return inverse ? 1 : -1;
-    }
-    if(a[prop] > b[prop])
-    {
-      return inverse ? -1 : 1;
-    }
-    return 0;
-  });
+	return typeof value === 'number' && !Number.isNaN(value);
 }
 
-export function intSort(arr: any[], prop: string, inverse: boolean)
+export function stringSort(arr: unknown[], prop: string, inverse: boolean): void
 {
-  arr.sort((a, b) =>
-  {
-    return inverse ? a[prop] - b[prop] : b[prop] - a[prop];
-  });
+	arr.sort((a, b) =>
+	{
+		if(!(isPopulatedObject(a) && isPopulatedObject(b)))
+		{
+			return -2;
+		}
+
+		if(!(isNumber(a[prop]) && isNumber(b[prop])))
+		{
+			return -1;
+		}
+
+		if(a[prop] < b[prop])
+		{
+			return inverse ? 1 : -1;
+		}
+		if(a[prop] > b[prop])
+		{
+			return inverse ? -1 : 1;
+		}
+		return 0;
+	});
 }
 
-export function dateSort(arr: any[], prop: string, inverse: boolean)
+export function intSort(arr: unknown[], prop: string, inverse: boolean): void
 {
-  arr.sort((a, b) =>
-  {
-    const aComp = new Date(a[prop]).getTime();
-    const bComp = new Date(b[prop]).getTime();
+	arr.sort((a, b) =>
+	{
+		if(!(isPopulatedObject(a) && isPopulatedObject(b)))
+		{
+			return -2;
+		}
 
-    return inverse ? aComp - bComp : bComp - aComp;
-  });
+		if(!(isNumber(a[prop]) && isNumber(b[prop])))
+		{
+			return -1;
+		}
+
+		return inverse ? a[prop] - b[prop] : b[prop] - a[prop];
+	});
+}
+
+/**
+ * Date will fail if provided a timestamp as a string, or an invalid string.
+ * @param dt 
+ * @returns 
+ */
+export function toValidDateInput(dt: unknown): string | number | undefined
+{
+	if(dt === 0)
+	{
+		return dt;
+	}
+
+	if(!dt)
+	{
+		return undefined;
+	}
+
+	if(dt && typeof dt === 'number')
+	{
+		return dt;
+	}
+
+	if(dt && typeof dt === 'string')
+	{
+		const dtAsNum = parseInt(dt, 10);
+
+		if(`${dtAsNum}` == dt)
+		{
+			return dtAsNum;
+		}
+
+		return dt;
+	}
+
+	return undefined;
+}
+
+export function toValidDate(dt: unknown): Date | undefined
+{
+	const dtInput = toValidDateInput(dt);
+
+	if(!dtInput)
+	{
+		return undefined;
+	}
+
+	return new Date(dtInput);
+}
+
+export function dateSort(arr: unknown[], prop: string, inverse: boolean): void
+{
+	arr.sort((a, b) =>
+	{
+		if(!(isPopulatedObject(a) && isPopulatedObject(b)))
+		{
+			return -2;
+		}
+
+		const dateA = toValidDate(a[prop]);
+		const dateB = toValidDate(b[prop]);
+
+		if(!(dateA && dateB))
+		{
+			return -1;
+		}
+
+		const aComp = dateA.getTime();
+		const bComp = dateB.getTime();
+
+		return inverse ? aComp - bComp : bComp - aComp;
+	});
 }
 
 export function toNumber(num: unknown): number | undefined
 {
-  if(typeof num === 'number')
-  {
-    if(Number.isNaN(num))
-    {
-      return undefined;
-    }
+	if(typeof num === 'number')
+	{
+		if(Number.isNaN(num))
+		{
+			return undefined;
+		}
 
-    return num;
-  }
+		return num;
+	}
 
-  if(num && typeof num === 'string')
-  {
-    const parsedNum = num.includes('.') ? parseFloat(num) : parseInt(num, 10);
+	if(num && typeof num === 'string')
+	{
+		const parsedNum = num.includes('.') ? parseFloat(num) : parseInt(num, 10);
 
-    if(`${parsedNum}` === `${num}`)
-    {
-      return parsedNum;
-    }
-  }
+		if(`${parsedNum}` === `${num}`)
+		{
+			return parsedNum;
+		}
+	}
 
-  return undefined;
+	return undefined;
 }
 
 export function isPopulatedObject(obj: unknown): obj is Record<string, unknown>
 {
-  return !!(
-    obj &&
-    typeof obj === 'object' &&
-    !Array.isArray(obj) &&
-    Object.keys(obj).length > 0
-  );
+	return !!(
+		obj &&
+		typeof obj === 'object' &&
+		!Array.isArray(obj) &&
+		Object.keys(obj).length > 0
+	);
 }
 
 export function removeUndefined<T = unknown | unknown[]>(inputData: T, depth = 0): Array<Partial<T>> | Partial<T> | null
 {
-  if(typeof inputData === 'undefined')
-  {
-    // normalise to null
-    return null;
-  }
+	if(typeof inputData === 'undefined')
+	{
+		// normalise to null
+		return null;
+	}
 
-  // array handling
-  if(Array.isArray(inputData))
-  {
-    return inputData.map(
-      (item) => removeUndefined(item, depth + 1)
-    ) as Partial<T>[];
-  }
+	// array handling
+	if(Array.isArray(inputData))
+	{
+		return inputData.map(
+			(item) => removeUndefined(item, depth + 1)
+		) as Partial<T>[];
+	}
 
-  // non-object handling
-  if(!isPopulatedObject(inputData))
-  {
-    return inputData;
-  }
+	// non-object handling
+	if(!isPopulatedObject(inputData))
+	{
+		return inputData;
+	}
 
-  const data = structuredClone(inputData) as Record<string, unknown>;
+	const data = structuredClone(inputData) as Record<string, unknown>;
 
-  Object.keys(data).forEach((key) =>
-  {
-    if(typeof data[key] === 'undefined')
-    {
-      delete data[key];
-    }
-  });
+	Object.keys(data).forEach((key) =>
+	{
+		if(typeof data[key] === 'undefined')
+		{
+			delete data[key];
+		}
+	});
 
-  return data as Partial<T>;
+	return data as Partial<T>;
 }
 
 // export function _removeUndefined<T = any>(inputData: T, depth = 0): T | null
@@ -268,87 +364,87 @@ export function removeUndefined<T = unknown | unknown[]>(inputData: T, depth = 0
 
 export function uniq<T>(arr: T[], prop?: string): T[]
 {
-  if(!Array.isArray(arr))
-  {
-    return [];
-  }
+	if(!Array.isArray(arr))
+	{
+		return [];
+	}
 
-  if(prop)
-  {
-    return arr.reduce((agg, item) =>
-    {
-      if(isPopulatedObject(item) && (prop in (item as any)))
-      {
-        if(!agg.some((foundItem) => (
-          (foundItem as any)[prop] === (item as any)[prop]
-        )))
-        {
-          agg.push(item);
-        }
-      }
+	if(prop)
+	{
+		return arr.reduce((agg, item) =>
+		{
+			if(isPopulatedObject(item) && (prop in (item as any)))
+			{
+				if(!agg.some((foundItem) => (
+					(foundItem as any)[prop] === (item as any)[prop]
+				)))
+				{
+					agg.push(item);
+				}
+			}
 
-      return agg;
-    }, [] as T[]);
-  }
+			return agg;
+		}, [] as T[]);
+	}
 
-  return arr.reduce((agg, item) =>
-  {
-    if(!agg.includes(item))
-    {
-      agg.push(item);
-    }
+	return arr.reduce((agg, item) =>
+	{
+		if(!agg.includes(item))
+		{
+			agg.push(item);
+		}
 
-    return agg;
-  }, [] as T[]);
+		return agg;
+	}, [] as T[]);
 }
 
 export function deepMerge(source: unknown, target: unknown): any
 {
-  if(Array.isArray(source) && Array.isArray(target))
-  {
-    return [...source, ...target];
-  }
+	if(Array.isArray(source) && Array.isArray(target))
+	{
+		return [...source, ...target];
+	}
 
-  if(isPopulatedObject(source) && isPopulatedObject(target))
-  {
-    const allKeys = uniq([
-      ...Object.keys(source as any),
-      ...Object.keys(target as any)
-    ]);
+	if(isPopulatedObject(source) && isPopulatedObject(target))
+	{
+		const allKeys = uniq([
+			...Object.keys(source as any),
+			...Object.keys(target as any)
+		]);
 
-    return allKeys.reduce((agg, key) =>
-    {
-      agg[key] = deepMerge((source as any)[key], (target as any)[key]);
+		return allKeys.reduce((agg, key) =>
+		{
+			agg[key] = deepMerge((source as any)[key], (target as any)[key]);
 
-      return agg;
-    }, {} as any);
-  }
+			return agg;
+		}, {} as any);
+	}
 
-  if(source && target)
-  {
-    return (source as any) + (target as any);
-  }
+	if(source && target)
+	{
+		return (source as any) + (target as any);
+	}
 
-  return source || target;
+	return source || target;
 }
 
 export const uuidRegex = (
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
+	/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 );
 
 export function isUuid(str: unknown): str is UUID
 {
-  if(!str || typeof str !== 'string')
-  {
-    return false;
-  }
+	if(!str || typeof str !== 'string')
+	{
+		return false;
+	}
 
-  return uuidRegex.test(str);
+	return uuidRegex.test(str);
 }
 
 export function isUuidArray(arr: unknown): arr is UUID[]
 {
-  return (Array.isArray(arr) && arr.every(isUuid));
+	return (Array.isArray(arr) && arr.every(isUuid));
 }
 
 /**
@@ -357,81 +453,81 @@ export function isUuidArray(arr: unknown): arr is UUID[]
  * @returns Array of UUIDs
  */
 export function retrieveItemIds<IItemType = Record<string, unknown>>(
-  items: Array<IItemType | UUID | unknown>,
-  allowRecursion?: boolean
+	items: Array<IItemType | UUID | unknown>,
+	allowRecursion?: boolean
 ): UUID[]
 {
-  const result: UUID[] = [];
+	const result: UUID[] = [];
 
-  if(!Array.isArray(items))
-  {
-    return result;
-  }
+	if(!Array.isArray(items))
+	{
+		return result;
+	}
 
-  items.forEach((item) =>
-  {
-    if(!item)
-    {
-      return;
-    }
-    else if(typeof item === 'string')
-    {
-      if(isUuid(item))
-      {
-        result.push(item);
-      }
-    }
-    else if(isPopulatedObject(item))
-    {
-      if(isUuid(item?.id))
-      {
-        result.push(item.id);
-      }
+	items.forEach((item) =>
+	{
+		if(!item)
+		{
+			return;
+		}
+		else if(typeof item === 'string')
+		{
+			if(isUuid(item))
+			{
+				result.push(item);
+			}
+		}
+		else if(isPopulatedObject(item))
+		{
+			if(isUuid(item?.id))
+			{
+				result.push(item.id);
+			}
 
-      if(
-        allowRecursion &&
-        Array.isArray(item?.children) &&
-        item.children.length
-      )
-      {
-        result.push(...(retrieveItemIds(item.children)));
-      }
-    }
-  });
+			if(
+				allowRecursion &&
+				Array.isArray(item?.children) &&
+				item.children.length
+			)
+			{
+				result.push(...(retrieveItemIds(item.children)));
+			}
+		}
+	});
 
-  return result;
+	return result;
 }
 
 export function dotPick(obj: Record<string, unknown>, path: string)
 {
-  if(!path || typeof path !== 'string') return undefined;
+	if(!path || typeof path !== 'string') return undefined;
 
-  path = path.replaceAll('[', '.');
-  path = path.replaceAll(']', '.');
-  path = path.replaceAll('..', '.');
+	path = path.replaceAll('[', '.');
+	path = path.replaceAll(']', '.');
+	path = path.replaceAll('..', '.');
 
-  if(path.substring(path.length - 1, path.length) === '.')
-  {
-    path = path.substring(0, path.length - 1);
-  }
+	if(path.substring(path.length - 1, path.length) === '.')
+	{
+		path = path.substring(0, path.length - 1);
+	}
 
-  const arr = path.split('.');
-  let res: unknown = obj;
+	const arr = path.split('.');
+	let res: unknown = obj;
 
-  do
-  {
-    const nextKey = arr.shift();
+	do
+	{
+		const nextKey = arr.shift();
 
-    if(nextKey)
-    {
-      res = (res as Record<string, unknown>)?.[nextKey];
-    }
-    else
-    {
-      break;
-    }
-  }
-  while(arr.length && isPopulatedObject(res))
+		if(nextKey)
+		{
+			res = (res as Record<string, unknown>)?.[nextKey];
+		}
+		else
+		{
+			break;
+		}
+	}
+	while(arr.length && isPopulatedObject(res));
 
-  return res;
+	return res;
 }
