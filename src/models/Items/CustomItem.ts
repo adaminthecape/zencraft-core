@@ -79,7 +79,10 @@ export class CustomHandler
 		this.typeId = opts.definition.itemType || 'Custom';
 		this.definition = opts.definition;
 		this.fieldDataArray = opts.fieldDataArray.filter(isPopulatedObject);
-		this.fieldKeyMap = reduceIntoAssociativeArray(this.fieldDataArray, 'key');
+		this.fieldKeyMap = reduceIntoAssociativeArray(
+			this.fieldDataArray,
+			'key'
+		) as Record<string, FieldData>;
 		this.validator = new FieldValidator({
 			fieldsArray: this.fieldDataArray
 		});
