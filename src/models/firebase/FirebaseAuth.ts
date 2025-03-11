@@ -1,4 +1,4 @@
-import { initializeApp } from '@firebase/app';
+import { FirebaseApp, initializeApp } from '@firebase/app';
 import { getAuth, signInWithEmailAndPassword, User, UserCredential } from '@firebase/auth';
 import { generateUuid } from '../../utils/uuid';
 import { isPopulatedObject } from '../../utils/tools';
@@ -31,11 +31,11 @@ export class FirebaseAuth
 {
 	private isDebugMode = false;
 	private userAccount?: UserCredentials;
-	private user?: User;
+	private user?: UserAuth;
 	public isInitialised: boolean;
 	public isAuthorising: boolean;
 	private authWaitInterval: ReturnType<typeof setInterval> | undefined;
-	private app: any;
+	private app: FirebaseApp | undefined;
 	private token: string | undefined;
 	private config: FirebaseConfig;
 	private instanceDebugId: string = generateUuid().split('-')[0];
@@ -69,7 +69,7 @@ export class FirebaseAuth
 		}
 	}
 
-	protected $log(...msgs: any[])
+	protected $log(...msgs: unknown[])
 	{
 		console.log(`FirebaseAuth ${this.instanceDebugId}:`, ...msgs);
 	}
@@ -111,7 +111,7 @@ export class FirebaseAuth
 		}
 	}
 
-	private async login(user: UserCredentials): Promise<User | undefined>
+	private async login(user: UserCredentials): Promise<UserAuth | undefined>
 	{
 		this.$log('login');
 		if(this.isDebugMode)
@@ -132,6 +132,7 @@ export class FirebaseAuth
 				{
 					console.log(`logged in as ${user.email}`);
 					// Signed in
+					// @ts-expect-error TODO: Verify firebase still working
 					resolve(userCredential.user);
 				})
 				.catch((error: Error) =>

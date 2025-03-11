@@ -26,13 +26,20 @@ export type SqlDatabaseOpts = {
 	customConfig?: SqlUserConfig;
 };
 
+export type MySQLConnection = {
+	connect: () => Promise<void>;
+	end: () => void;
+	query: (query: string) => Promise<unknown>;
+	format: (query: string, params: unknown[]) => string;
+};
+
 export class SqlDatabase<
 	IItemIdType extends (string | number) = string,
 	IItemType = Item
 > extends GenericDatabase<string, IItemType>
 {
 	protected config: SqlUserConfig | undefined;
-	protected connection: any;
+	protected connection: MySQLConnection | undefined;
 	protected lastQuery: string | undefined;
 	public isConnected: boolean = false;
 	protected connectionTimeoutValue: number = 500;
@@ -126,7 +133,7 @@ export class SqlDatabase<
 			.trim();
 	}
 
-	protected async getDb(): Promise<any | undefined>
+	protected async getDb(): Promise<ReturnType<typeof this.connect> | undefined>
 	{
 		await this.connect();
 	}
@@ -166,7 +173,12 @@ export class SqlDatabase<
 			}
 			else
 			{
-				result = resultData?.[0];
+				if(Array.isArray(resultData))
+				{
+					return resultData[0];
+				}
+
+				return undefined;
 			}
 
 			if(
@@ -201,18 +213,27 @@ export class SqlDatabase<
 
 		return this.query(queryString, params, (data) =>
 		{
-			try
-			{
-				const [[row]] = data;
+			let row;
 
-				return row?.[Object.keys(row || {})?.[0]];
-			}
-			catch(e)
+			if(Array.isArray(data))
 			{
-				console.error(e);
+				if(Array.isArray(data[0]))
+				{
+					row = data[0][0];
 
-				return undefined;
+					if(row)
+					{
+						const key = Object.keys(row || {})?.[0];
+
+						if(key)
+						{
+							return row[key];
+						}
+					}
+				}
 			}
+
+			return undefined;
 		});
 	}
 
@@ -225,17 +246,12 @@ export class SqlDatabase<
 
 		return this.query(queryString, params, (data) =>
 		{
-			try
+			if(Array.isArray(data))
 			{
-				const [[row]] = data;
-
-				return row;
-			}
-			catch(e)
-			{
-				console.error(e);
-
-				return undefined;
+				if(Array.isArray(data[0]))
+				{
+					return data[0][0];
+				}
 			}
 		});
 	}

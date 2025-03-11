@@ -230,9 +230,19 @@ export class UserPermissions
 			params
 		);
 
+		if(Array.isArray(permissions))
+		{
+			return {
+				permissions,
+				total,
+				limit: filters.pagination.limit,
+				page: filters.pagination.page,
+			};
+		}
+
 		return {
-			permissions,
-			total,
+			permissions: [],
+			total: 0,
 			limit: filters.pagination.limit,
 			page: filters.pagination.page,
 		};

@@ -241,20 +241,9 @@ export class ItemHandler<IItemType extends Item = Item> implements Item
 		key: string;
 		value: T;
 		validator: (value: T) => boolean;
-		stringsCannotBeNumbers?: boolean;
 	}): void
 	{
-		const { key, stringsCannotBeNumbers } = opts;
-		let { value } = opts;
-
-		if(
-			!stringsCannotBeNumbers &&
-			typeof value === 'string' &&
-			`${parseInt(value, 10)}` === value
-		)
-		{
-			value = parseInt(value, 10);
-		}
+		const { key, value } = opts;
 
 		if(value === null)
 		{
