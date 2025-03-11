@@ -463,7 +463,7 @@ export class ItemHandler<IItemType extends Item = Item> implements Item
 			await this.db.update<IItemType>({
 				itemType: this.typeId,
 				itemId: this.id,
-				data: data
+				data: data as IItemType
 			});
 		}
 		catch(e)

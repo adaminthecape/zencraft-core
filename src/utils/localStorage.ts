@@ -17,9 +17,14 @@ export function saveToLocalStorage(name: string, data: unknown)
 	if(data && typeof data === 'object')
 	{
 		localStorage.setItem(validName, JSON.stringify(data));
-	} else
+	}
+	else if(['string', 'number', 'boolean'].includes(typeof data))
 	{
-		localStorage.setItem(validName, data);
+		localStorage.setItem(validName, `${data}`);
+	}
+	else if(!data)
+	{
+		localStorage.setItem(validName, '');
 	}
 }
 

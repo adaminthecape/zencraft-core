@@ -110,7 +110,10 @@ export class ArchetypeHandler<DefinitionType extends ArchetypeItem = ArchetypeIt
 		if(Array.isArray(opts.fieldsArray))
 		{
 			this.attachedFields = opts.fieldsArray.map((f) => f.id);
-			this.fieldsMap = reduceIntoAssociativeArray(opts.fieldsArray, 'key');
+			this.fieldsMap = reduceIntoAssociativeArray(
+				opts.fieldsArray,
+				'key'
+			) as Record<string, FieldData>;
 		}
 		else if(isPopulatedObject(opts.fieldsMap))
 		{

@@ -251,14 +251,21 @@ export class SqlDatabase<
 			return { success: false, error: `Table name "${tableName}" invalid` };
 		}
 
-		const columns = (await this.query(
+		const tableColumns = await this.query(
 			`SHOW COLUMNS FROM ??`,
 			[tableName]
-		))
+		);
+
+		if(!(Array.isArray(tableColumns) && tableColumns.length))
+		{
+			return { success: false, error: 'No columns' };
+		}
+
+		const columns = tableColumns
 			?.map((colDef: SqlColumnDefinition) => colDef?.Field)
 			?.filter((f: string) => f);
 
-		if(!columns)
+		if(!columns.length)
 		{
 			return { success: false, error: 'No columns' };
 		}
@@ -513,11 +520,28 @@ export class SqlDatabase<
 			throw new Error('Table name invalid');
 		}
 
-		return this.query(
+		const results = await this.query(
 			`SELECT * FROM ?? ${itemIds?.length ? `WHERE id IN (${itemIds.map((id) => '?').join(',')
 				})` : ''}`,
 			[tableName, ...(itemIds || [])]
 		);
+
+		if(Array.isArray(results) && results.length)
+		{
+			return {
+				results: results as IItemType[],
+				hasMore: false,
+				totalItems: results.length,
+				pagination: opts.pagination || {},
+			};
+		}
+
+		return {
+			results: [],
+			hasMore: false,
+			totalItems: 0,
+			pagination: opts.pagination || {},
+		};
 	}
 
 	public async remove(opts: {

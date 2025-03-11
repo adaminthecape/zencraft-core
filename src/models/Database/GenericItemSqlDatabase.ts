@@ -110,6 +110,11 @@ export class GenericItemSqlDatabase<
 			?.map((colDef: SqlColumnDefinition) => colDef?.Field)
 			?.filter((f: string) => f);
 
+		if(!columns.length)
+		{
+			return { success: false, error: 'No columns' };
+		}
+
 		const matches = columnNames.reduce((agg, colToCheck) =>
 		{
 			agg[colToCheck] = columns.includes(colToCheck);

@@ -33,7 +33,7 @@ export function validatePermissionName(name: string): name is PermissionType
 		// second value must be a valid action type
 		(
 			typeof actionType === 'string' &&
-			Object.values(PermissionActionType).includes(actionType)
+			PermissionActionType[actionType as keyof typeof PermissionActionType]
 		) &&
 		// third value must be undefined or a valid UUID
 		((typeof scope === 'undefined') || isUuid(scope) || (scope === 'all'))

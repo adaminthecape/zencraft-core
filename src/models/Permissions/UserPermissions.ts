@@ -200,14 +200,14 @@ export class UserPermissions
 
 		try
 		{
-			const countData = await db.query1r(
+			const count = await db.query1(
 				`SELECT COUNT(p.userId) AS count FROM permissionsMap p WHERE ${wheres.join(
 					' AND '
 				)}`,
 				params
 			);
 
-			total = countData?.count || 0;
+			total = (typeof count === 'number') ? count : 0;
 		}
 		catch(e)
 		{
@@ -266,7 +266,7 @@ export class UserPermissions
 	 */
 	public async getUsersActivePermissions(
 		opts?: Partial<PermissionMapRow>
-	): Promise<void>
+	): Promise<PermissionMapRow[]>
 	{
 		// TODO: Guard against users phishing for others' permissions
 		const wheres = [];
@@ -298,10 +298,10 @@ export class UserPermissions
 		wheres.push('status = ?');
 		params.push(PermissionStatus.ACTIVE);
 
-		return this.db.query(
+		return ((await this.db.query(
 			`SELECT * FROM permissionsMap WHERE (${wheres.join(' AND ')})`,
 			params
-		);
+		)) || []) as PermissionMapRow[];
 	}
 
 	// assign a permission to a user
@@ -608,10 +608,10 @@ export class UserPermissions
 		wheres.push('status IN (?)');
 		params.push(!states?.length ? [PermissionStatus.ACTIVE] : states);
 
-		return this.db.query1r(
+		return (await this.db.query1r(
 			`SELECT * FROM permissionsMap WHERE (${wheres.join(' AND ')})`,
 			params
-		);
+		)) as PermissionMapRow | undefined;
 	}
 
 	public async validate(
