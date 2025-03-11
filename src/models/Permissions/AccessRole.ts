@@ -1,4 +1,4 @@
-import { KnownItemType, Nullable, UUID } from '../../types/generic';
+import { KnownItemType, Nullable } from '../../types/generic';
 import { PermissionActionType, PermissionMapRow, PermissionType, PermissionStatus } from './UserPermissions';
 import { DbFilters, DbFilterOperator } from '../Database/DbFilters';
 import { GenericDatabase } from '../Database/GenericDatabase';

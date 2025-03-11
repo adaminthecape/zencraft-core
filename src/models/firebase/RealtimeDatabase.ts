@@ -1,10 +1,10 @@
 import { FirebaseAuth, FirebaseAuthOpts } from './FirebaseAuth';
-import { collection, getFirestore, doc, addDoc, setDoc, initializeFirestore, getDoc, query, where, or, and, QueryCompositeFilterConstraint, QueryConstraint, getDocs, deleteDoc, WhereFilterOp } from '@firebase/firestore';
+import { collection, getFirestore, doc, addDoc, setDoc, getDoc, query, where, or, and, QueryCompositeFilterConstraint, QueryConstraint, getDocs, deleteDoc, WhereFilterOp } from '@firebase/firestore';
 import { UUID } from '../../types/generic';
 import { FirebaseApp } from '@firebase/app';
 import { Item } from '../Items/GenericItem';
 import { GenericDatabase } from '../Database/GenericDatabase';
-import { DbFilterOperator, DbFilters, isGroupFilter } from '../Database/DbFilters';
+import { DbFilters, isGroupFilter } from '../Database/DbFilters';
 import { isPopulatedObject, removeUndefined } from '../../utils/tools';
 import { DbPaginationOpts, PaginatedItemResponse } from '../Database/Pagination';
 

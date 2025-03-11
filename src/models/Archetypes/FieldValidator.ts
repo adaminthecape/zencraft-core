@@ -1,10 +1,8 @@
 import { UUID, KnownItemType } from '../../types/generic';
 import { FieldData, Field, FieldType, FieldValidation } from '../Items/Field';
-import { GenericDatabase, GenericDatabaseOpts } from '../Database/GenericDatabase';
-import { DbFilters, isGroupFilter, isSingleFilter } from '../Database/DbFilters';
-import { DbPaginationOpts, PaginatedItemResponse } from '../Database/Pagination';
+import { GenericDatabase } from '../Database/GenericDatabase';
+import { isGroupFilter, isSingleFilter } from '../Database/DbFilters';
 import { toNumber, isUuid, reduceIntoAssociativeArray, isPopulatedObject } from '../../utils/generic';
-import { genericDb } from '../..';
 
 export type KnownValidationRules = keyof FieldValidation;
 export type ValidationResult = (true | string);

@@ -1,6 +1,5 @@
 import { ItemType, UUID } from '../../types/generic';
 import { SqlDatabase } from '../Database/SqlDatabase';
-import { ItemHandler, ItemOpts } from '../Items/GenericItem';
 
 function getCurrentSecond(): number
 {
