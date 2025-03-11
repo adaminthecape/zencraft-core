@@ -315,7 +315,8 @@ export class ItemHandler<IItemType extends Item = Item> implements Item
       this.data.updatedAt = value;
     }
 
-    this.markDirty('updatedAt');
+    // disabled due to spam - any update updates this value
+    // this.markDirty('updatedAt');
   }
 
   public get createdAt(): number | undefined
