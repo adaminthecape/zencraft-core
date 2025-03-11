@@ -539,11 +539,6 @@ export class ItemHandler<IItemType extends Item = Item> implements Item
 
   public markDirty(name: string): void
   {
-    if(!(name in this))
-    {
-      return;
-    }
-
     this.dirtyFields[name] = true;
 
     if(typeof this.onDirtyField === 'function')
