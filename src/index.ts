@@ -31,6 +31,12 @@ export * as sqlDb from "./models/Database/SqlDatabase";
  * table, and high-volume data in separate tables.
  */
 export * as itemSqlDb from "./models/Database/GenericItemSqlDatabase";
+/**
+ * This is an in-memory db handler, which is useful for rapid prototyping and/or
+ * testing. It is not recommended for production use, as it will lose all data
+ * when the server is restarted or the handler instance is destroyed.
+ */
+export * as ramDb from "./models/Database/RamDatabase";
 
 /**
  * These database filter types and handler present a consistent interface for
