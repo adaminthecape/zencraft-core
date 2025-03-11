@@ -31,7 +31,7 @@ export type OnDirtyFieldFn = (
 ) => void;
 
 /** Replicated here to avoid circular imports as Archetype extends Item */
-type ArchetypeData = {
+type ArchetypeData = Item & {
 	id: Nullable<string>;
 	name: Nullable<string>;
 	itemType: Nullable<string>;
@@ -130,9 +130,9 @@ export class ItemHandler<IItemType extends Item = Item> implements Item
 			this.setOnDirtyField(opts.onDirtyField);
 		}
 
-		if(opts.initialData)
+		if(isPopulatedObject(opts.initialData))
 		{
-			this.setData(opts.initialData as any);
+			this.setData(opts.initialData as Partial<IItemType>);
 		}
 
 		if(opts.typeId)
@@ -210,7 +210,7 @@ export class ItemHandler<IItemType extends Item = Item> implements Item
 		return results || [];
 	}
 
-	protected async loadDefinition()
+	protected async loadDefinition(): Promise<ArchetypeData | undefined>
 	{
 		if(isPopulatedObject(this.definition))
 		{
@@ -227,14 +227,12 @@ export class ItemHandler<IItemType extends Item = Item> implements Item
 			itemId: this.definitionId,
 		});
 
-		console.log('loaded definition:', this.definitionId, definitionData);
-
 		if(!definitionData)
 		{
-			return;
+			return undefined;
 		}
 
-		this.definition = definitionData as any;
+		this.definition = definitionData as ArchetypeData;
 
 		return this.definition;
 	}
@@ -255,12 +253,12 @@ export class ItemHandler<IItemType extends Item = Item> implements Item
 			`${parseInt(value, 10)}` === value
 		)
 		{
-			value = parseInt(value, 10) as any;
+			value = parseInt(value, 10);
 		}
 
 		if(value === null)
 		{
-			(this.data as any)[key] = value;
+			(this.data as Record<string, unknown>)[key] = null;
 			this.markDirty(key);
 		}
 		/**
@@ -271,7 +269,7 @@ export class ItemHandler<IItemType extends Item = Item> implements Item
 		 */
 		else if(opts.validator(value))
 		{
-			(this.data as any)[key] = value;
+			(this.data as Record<string, unknown>)[key] = value;
 			this.markDirty(key);
 		}
 		else if(typeof value !== 'undefined')
@@ -414,7 +412,7 @@ export class ItemHandler<IItemType extends Item = Item> implements Item
 			return undefined;
 		}
 
-		this.setData(item as any);
+		this.setData(item as Partial<IItemType>);
 		this.isLoaded = true;
 
 		return this.getData();
@@ -464,8 +462,8 @@ export class ItemHandler<IItemType extends Item = Item> implements Item
 		{
 			await this.db.update<IItemType>({
 				itemType: this.typeId,
-				itemId: this.id as any,
-				data: data as any
+				itemId: this.id,
+				data: data
 			});
 		}
 		catch(e)
@@ -543,9 +541,12 @@ export class ItemHandler<IItemType extends Item = Item> implements Item
 
 		if(typeof this.onDirtyField === 'function')
 		{
-			// not sure if this should reference this.data or this
-			// this[name] invokes the getter, with potential undesired side effects
-			this.onDirtyField(this.id, this.typeId, name, (this.data as any)[name]);
+			this.onDirtyField(
+				this.id,
+				this.typeId,
+				name,
+				(this.data as Record<string, unknown>)[name]
+			);
 		}
 	}
 
