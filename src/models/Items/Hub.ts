@@ -6,22 +6,22 @@ import { isPopulatedObject } from '../../utils/tools';
 export type HubItemOpts = ItemOpts;
 
 export type HubItem = Item & {
-  title: Nullable<string>;
-  slug: Nullable<string>;
-  pageIds: Nullable<UUID[]>;
-  defaultPageId: Nullable<UUID>;
+	title: Nullable<string>;
+	slug: Nullable<string>;
+	pageIds: Nullable<UUID[]>;
+	defaultPageId: Nullable<UUID>;
 };
 
 export const REGEX_SLUG = /^[a-z0-9\-]{0,50}$/gi;
 
 // @ts-expect-error
 export class HubHandler
-  extends ItemHandler<HubItem>
+	extends ItemHandler<HubItem>
 	implements HubItem
 {
 	public typeId: any = KnownItemType.Hub;
 
-  public static async getInstance(opts: HubItemOpts): Promise<HubHandler>
+	public static async getInstance(opts: HubItemOpts): Promise<HubHandler>
 	{
 		const instance = new HubHandler(opts);
 
@@ -31,12 +31,12 @@ export class HubHandler
 	}
 
 	constructor(opts: HubItemOpts)
-  {
+	{
 		super(opts);
 
 		this.setDefinition({
-      definitionId: 'e40c4ab1-a490-408a-94f6-b5410b4779c6'
-    });
+			definitionId: 'e40c4ab1-a490-408a-94f6-b5410b4779c6'
+		});
 	}
 
 	get title(): Nullable<string>
@@ -45,68 +45,68 @@ export class HubHandler
 	}
 
 	set title(value: unknown)
-  {
-    this.setIfValid({
-      key: 'title',
-      value,
-      validator: (val) => ((typeof val === 'string') && val.length <= 200)
-    });
+	{
+		this.setIfValid({
+			key: 'title',
+			value,
+			validator: (val) => ((typeof val === 'string') && val.length <= 200)
+		});
 	}
 
-  get pageIds(): Nullable<UUID[]>
-  {
-    return this.data.pageIds;
-  }
+	get pageIds(): Nullable<UUID[]>
+	{
+		return this.data.pageIds;
+	}
 
-  set pageIds(value: unknown)
-  {
-    this.setIfValid({
-      key: 'pageIds',
-      value,
-      validator: (val) => (Array.isArray(val) && val.every(isUuid))
-    });
-  }
+	set pageIds(value: unknown)
+	{
+		this.setIfValid({
+			key: 'pageIds',
+			value,
+			validator: (val) => (Array.isArray(val) && val.every(isUuid))
+		});
+	}
 
-  get slug(): Nullable<string>
-  {
-    return this.data.slug;
-  }
+	get slug(): Nullable<string>
+	{
+		return this.data.slug;
+	}
 
-  set slug(value: unknown)
-  {
-    this.setIfValid({
-      key: 'slug',
-      value,
-      validator: (val) => (
-        (typeof val === 'string') &&
-        val.length <= 50 &&
-        /^[a-z0-9\-]{0,50}$/.test(val)
-      )
-    });
-  }
+	set slug(value: unknown)
+	{
+		this.setIfValid({
+			key: 'slug',
+			value,
+			validator: (val) => (
+				(typeof val === 'string') &&
+				val.length <= 50 &&
+				/^[a-z0-9\-]{0,50}$/.test(val)
+			)
+		});
+	}
 
-  get defaultPageId(): Nullable<UUID>
-  {
-    return this.data.defaultPageId;
-  }
+	get defaultPageId(): Nullable<UUID>
+	{
+		return this.data.defaultPageId;
+	}
 
-  set defaultPageId(value: unknown)
-  {
-    this.setIfValid({
-      key: 'defaultPageId',
-      value,
-      validator: (val) => ((typeof val === 'string') && isUuid(val))
-    });
-  }
+	set defaultPageId(value: unknown)
+	{
+		this.setIfValid({
+			key: 'defaultPageId',
+			value,
+			validator: (val) => ((typeof val === 'string') && isUuid(val))
+		});
+	}
 
 	public getData(): HubItem
 	{
 		return {
 			...super.getData(),
-      title: this.title,
-      slug: this.slug,
-      pageIds: this.pageIds,
-      defaultPageId: this.defaultPageId,
+			title: this.title,
+			slug: this.slug,
+			pageIds: this.pageIds,
+			defaultPageId: this.defaultPageId,
 		};
 	}
 
@@ -118,14 +118,14 @@ export class HubHandler
 		}
 
 		try
-    {
-      super.setData({});
+		{
+			super.setData({});
 
 			this.typeId = KnownItemType.Hub;
-      this.title = data.title;
-      this.slug = data.slug;
-      this.pageIds = data.pageIds;
-      this.defaultPageId = data.defaultPageId;
+			this.title = data.title;
+			this.slug = data.slug;
+			this.pageIds = data.pageIds;
+			this.defaultPageId = data.defaultPageId;
 		}
 		catch(e)
 		{

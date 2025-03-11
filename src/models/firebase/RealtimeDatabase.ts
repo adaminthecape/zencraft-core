@@ -359,13 +359,13 @@ export class FirebaseRTDB extends GenericDatabase
 					{
 						return [
 							or(...(filter.children.map((f) => convertFilterToFirebase(f)).flat()))
-						]
+						];
 					}
 					else if(filter.group === 'and')
 					{
 						return [
 							and(...(filter.children.map((f) => convertFilterToFirebase(f)).flat()))
-						]
+						];
 					}
 				}
 				else if(filter.key && filter.operator)

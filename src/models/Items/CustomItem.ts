@@ -92,7 +92,7 @@ export class CustomHandler
 	}): void
 	{
 		const { key } = opts;
-		let { value } = opts;
+		const { value } = opts;
 
 		if(value === null)
 		{
@@ -205,7 +205,7 @@ export class CustomHandler
 
 			if(!this.createdAt)
 			{
-				this.createdAt = now; 
+				this.createdAt = now;
 			}
 
 			if(data.definitionId)

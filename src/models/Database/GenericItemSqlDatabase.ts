@@ -484,13 +484,12 @@ export class GenericItemSqlDatabase<
 			sortOrder = 'DESC';
 		}
 
-		const getQuery = (fieldsToUse: string) => (`SELECT ${
-			fieldsToUse
-		} FROM ?? ${queryWheres.length ?
-			`WHERE ${queryWheres.map((v) => `(${v})`).join(' AND ')}` :
-			''
-		}${orderBy ? ` ORDER BY ${orderBy} ${sortOrder}` : ''
-		}`);
+		const getQuery = (fieldsToUse: string) => (`SELECT ${fieldsToUse
+			} FROM ?? ${queryWheres.length ?
+				`WHERE ${queryWheres.map((v) => `(${v})`).join(' AND ')}` :
+				''
+			}${orderBy ? ` ORDER BY ${orderBy} ${sortOrder}` : ''
+			}`);
 
 		// get the count first
 		if(limit)
@@ -513,10 +512,8 @@ export class GenericItemSqlDatabase<
 		}
 
 		await this.query(
-			`${getQuery(fieldsToReturn)}${
-				limit ? ` LIMIT ${limit}` : ''
-			}${
-				(limit && offset) ? ` OFFSET ${offset}` : ''
+			`${getQuery(fieldsToReturn)}${limit ? ` LIMIT ${limit}` : ''
+			}${(limit && offset) ? ` OFFSET ${offset}` : ''
 			}`,
 			['itemsPublished', ...queryParams],
 			(data) =>
@@ -681,7 +678,7 @@ export class GenericItemSqlDatabase<
 			wheres: [],
 			params: []
 		};
-		
+
 		if(![
 			DbFilterGroupType.and,
 			DbFilterGroupType.or

@@ -173,7 +173,7 @@ export class SqlDatabase<
 				this.isDebugMode ||
 				this.lastQuery?.includes('INSERT') ||
 				// this.lastQuery?.includes('UPDATE') ||
-				this.lastQuery?.includes('DELETE') 
+				this.lastQuery?.includes('DELETE')
 			)
 			{
 				console.log('-------------------------------------------------');
@@ -257,7 +257,7 @@ export class SqlDatabase<
 		))
 			?.map((colDef: SqlColumnDefinition) => colDef?.Field)
 			?.filter((f: string) => f);
-		
+
 		if(!columns)
 		{
 			return { success: false, error: 'No columns' };
@@ -406,13 +406,10 @@ export class SqlDatabase<
 			}
 		});
 
-		const sql = `REPLACE INTO \`${
-			tableName
-		}\` (${
-			fields.join(',')
-		}) VALUES (${
-			values.join(',')
-		})`;
+		const sql = `REPLACE INTO \`${tableName
+			}\` (${fields.join(',')
+			}) VALUES (${values.join(',')
+			})`;
 
 		await this.query(sql, params);
 	}
@@ -514,9 +511,8 @@ export class SqlDatabase<
 		}
 
 		return this.query(
-			`SELECT * FROM ?? ${itemIds?.length ? `WHERE id IN (${
-				itemIds.map((id) => '?').join(',')
-			})` : ''}`,
+			`SELECT * FROM ?? ${itemIds?.length ? `WHERE id IN (${itemIds.map((id) => '?').join(',')
+				})` : ''}`,
 			[tableName, ...(itemIds || [])]
 		);
 	}

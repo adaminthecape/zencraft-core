@@ -36,7 +36,7 @@ export class MigrationHandler
 	{
 		const wheres: string[] = [];
 		const params: unknown[] = [];
-		let query = '';
+		const query = '';
 
 		this.log('addTable', { query, params });
 
@@ -55,7 +55,7 @@ export class MigrationHandler
 	{
 		const wheres: string[] = [];
 		const params: unknown[] = [];
-		let query = '';
+		const query = '';
 
 		this.log('addColumnToTable', { query, params });
 

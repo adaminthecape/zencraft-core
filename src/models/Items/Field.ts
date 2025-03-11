@@ -21,7 +21,8 @@ export type FieldValidation = {
 	isItemFilterArray?: boolean;
 };
 
-export enum FieldType {
+export enum FieldType
+{
 	text = 'text',
 	textarea = 'textarea',
 	number = 'number',
@@ -42,7 +43,7 @@ export enum FieldType {
 	itemFieldKey = 'itemFieldKey',
 };
 
-export type FieldData = Item &  {
+export type FieldData = Item & {
 	key: Nullable<string>;
 	label?: Nullable<string>;
 	icon?: Nullable<string>;
@@ -68,7 +69,7 @@ export type FieldData = Item &  {
 	children?: Nullable<Array<UUID>>;
 	/** Maximum number of repeater or array items allowed */
 	maximumItems?: Nullable<number>;
-}
+};
 
 export type FieldHandlerOpts = ItemOpts;
 

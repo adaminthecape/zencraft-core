@@ -6,19 +6,19 @@ import { ItemOpts, Item, ItemHandler } from './GenericItem';
 export type PageItemOpts = ItemOpts;
 
 export type PageItem = Item & {
-  title: Nullable<string>;
-  slug: Nullable<string>;
-  blockIds: Nullable<UUID[]>;
+	title: Nullable<string>;
+	slug: Nullable<string>;
+	blockIds: Nullable<UUID[]>;
 };
 
 // @ts-expect-error
 export class PageHandler
-  extends ItemHandler<PageItem>
+	extends ItemHandler<PageItem>
 	implements PageItem
 {
 	public typeId: any = KnownItemType.Page;
 
-  public static async getInstance(opts: PageItemOpts): Promise<PageHandler>
+	public static async getInstance(opts: PageItemOpts): Promise<PageHandler>
 	{
 		const instance = new PageHandler(opts);
 
@@ -28,12 +28,12 @@ export class PageHandler
 	}
 
 	constructor(opts: PageItemOpts)
-  {
-    super(opts);
+	{
+		super(opts);
 
-    this.setDefinition({
-      definitionId: 'e40c4ab1-a490-408a-94f6-b5410b4779c6'
-    });
+		this.setDefinition({
+			definitionId: 'e40c4ab1-a490-408a-94f6-b5410b4779c6'
+		});
 	}
 
 	get title(): Nullable<string>
@@ -42,53 +42,53 @@ export class PageHandler
 	}
 
 	set title(value: unknown)
-  {
-    this.setIfValid({
-      key: 'title',
-      value,
-      validator: (val) => ((typeof val === 'string') && val.length <= 200)
-    });
+	{
+		this.setIfValid({
+			key: 'title',
+			value,
+			validator: (val) => ((typeof val === 'string') && val.length <= 200)
+		});
 	}
 
-  get blockIds(): Nullable<UUID[]>
-  {
-    return this.data.blockIds;
-  }
+	get blockIds(): Nullable<UUID[]>
+	{
+		return this.data.blockIds;
+	}
 
-  set blockIds(value: unknown)
-  {
-    this.setIfValid({
-      key: 'blockIds',
-      value,
-      validator: (val) => (Array.isArray(val) && val.every(isUuid))
-    });
-  }
+	set blockIds(value: unknown)
+	{
+		this.setIfValid({
+			key: 'blockIds',
+			value,
+			validator: (val) => (Array.isArray(val) && val.every(isUuid))
+		});
+	}
 
-  get slug(): Nullable<string>
-  {
-    return this.data.slug;
-  }
+	get slug(): Nullable<string>
+	{
+		return this.data.slug;
+	}
 
-  set slug(value: unknown)
-  {
-    this.setIfValid({
-      key: 'slug',
-      value,
-      validator: (val) => (
-        (typeof val === 'string') &&
-        val.length <= 50 &&
-        /^[a-z0-9\-]{0,50}$/.test(val)
-      )
-    });
-  }
+	set slug(value: unknown)
+	{
+		this.setIfValid({
+			key: 'slug',
+			value,
+			validator: (val) => (
+				(typeof val === 'string') &&
+				val.length <= 50 &&
+				/^[a-z0-9\-]{0,50}$/.test(val)
+			)
+		});
+	}
 
 	public getData(): PageItem
 	{
 		return {
 			...super.getData(),
-      title: this.title,
-      slug: this.slug,
-      blockIds: this.blockIds,
+			title: this.title,
+			slug: this.slug,
+			blockIds: this.blockIds,
 		};
 	}
 
@@ -100,13 +100,13 @@ export class PageHandler
 		}
 
 		try
-    {
-      super.setData({});
+		{
+			super.setData({});
 
 			this.typeId = KnownItemType.Page;
-      this.title = data.title;
-      this.slug = data.slug;
-      this.blockIds = data.blockIds;
+			this.title = data.title;
+			this.slug = data.slug;
+			this.blockIds = data.blockIds;
 		}
 		catch(e)
 		{
