@@ -67,15 +67,6 @@ export class GenericDatabase<
 		//
 	}
 
-	/** @deprecated */
-	public async select1r(opts: {
-		itemId: string;
-		itemType: string;
-	}): Promise<IItemType | undefined>
-	{
-		return {} as IItemType;
-	}
-
 	public async select<T = Record<string, unknown>>(opts: {
 		itemId: string;
 		itemType: string;
@@ -83,6 +74,16 @@ export class GenericDatabase<
 	}): Promise<IItemType | undefined>
 	{
 		return {} as IItemType;
+	}
+
+	public async selectValue<T = unknown>(opts: {
+		itemId: string;
+		itemType: string;
+		/** If key is not provided, the first key in the result will be used */
+		key?: string;
+	}): Promise<T | undefined>
+	{
+		return null as T;
 	}
 
 	public async selectMultiple<T = Record<string, unknown>>(opts: {

@@ -23,7 +23,14 @@ export class RamDatabase<
 		itemType: string;
 	}): boolean
 	{
-		return (isUuid(opts.itemId) && typeof opts.itemType === 'string');
+		const isValid = (isUuid(opts.itemId) && typeof opts.itemType === 'string');
+
+		if(!isValid)
+		{
+			console.error('Invalid itemType or itemId', opts);
+		}
+
+		return isValid;
 	}
 
 	public getCacheKey(opts: {
@@ -108,15 +115,6 @@ export class RamDatabase<
 
 			await this.insert(itemOpts);
 		}
-	}
-
-	/** @deprecated */
-	public async select1r(opts: {
-		itemId: string;
-		itemType: string;
-	}): Promise<IItemType | undefined>
-	{
-		return this.select(opts);
 	}
 
 	public async select(opts: {

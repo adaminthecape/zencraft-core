@@ -193,7 +193,6 @@ export class FirebaseRTDB extends GenericDatabase
 	}
 
 	public async update<T extends Item = Item>(opts: {
-		tableName?: string;
 		itemId: UUID;
 		itemType: string;
 		path?: string | undefined;
@@ -227,7 +226,6 @@ export class FirebaseRTDB extends GenericDatabase
 	}
 
 	public async insert<T = unknown>(opts: {
-		tableName?: string;
 		itemId: string;
 		itemType: string;
 		data: T;
@@ -259,32 +257,6 @@ export class FirebaseRTDB extends GenericDatabase
 		const colRef = collection(dbInstance, itemType);
 
 		await addDoc(colRef, data);
-	}
-
-	public async select1r<T = unknown>(opts: {
-		tableName?: string;
-		itemId: UUID;
-		itemType: string;
-	}): Promise<T | undefined>
-	{
-		const { itemType, itemId } = opts;
-
-		const dbInstance = await this.getDb();
-
-		if(!dbInstance)
-		{
-			return undefined;
-		}
-
-		const docRef = doc(dbInstance, itemType, itemId);
-		const docSnap = await getDoc(docRef);
-
-		if(!docSnap.exists())
-		{
-			return undefined;
-		}
-
-		return docSnap.data() as T;
 	}
 
 	public async select<T = unknown>(opts: {
@@ -424,12 +396,11 @@ export class FirebaseRTDB extends GenericDatabase
 	}
 
 	public async remove(opts: {
-		tableName: string;
 		itemId: UUID | string;
 		itemType: string;
 	}): Promise<void>
 	{
-		const { tableName, itemId } = opts;
+		const { itemType, itemId } = opts;
 
 		const dbInstance = await this.getDb();
 
@@ -438,7 +409,7 @@ export class FirebaseRTDB extends GenericDatabase
 			throw new Error(`Cannot delete ${itemId}: No db available`);
 		}
 
-		const docRef = doc(dbInstance, tableName, itemId);
+		const docRef = doc(dbInstance, itemType, itemId);
 		const docSnap = await getDoc(docRef);
 
 		if(!docSnap.exists())
