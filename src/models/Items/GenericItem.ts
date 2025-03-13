@@ -275,7 +275,7 @@ export class ItemHandler<IItemType extends Item = Item> implements Item
 	{
 		if(!this.data.updatedAt)
 		{
-			return Date.now();
+			return Math.floor(Date.now() / 1000);
 		}
 
 		return this.data.updatedAt;
@@ -479,7 +479,7 @@ export class ItemHandler<IItemType extends Item = Item> implements Item
 	}
 
 	public setData(
-		item: Partial<IItemType>,
+		item: Record<string, unknown>,
 		opts?: {
 			overwriteExisting?: boolean;
 		}
@@ -493,7 +493,10 @@ export class ItemHandler<IItemType extends Item = Item> implements Item
 
 		const baseData = this.getBaseData();
 
-		this.typeId = item.typeId || baseData.typeId;
+		this.typeId = [
+			item.typeId,
+			baseData.typeId
+		].find((s) => typeof s === 'string') || this.typeId;
 
 		this.data = {
 			// existing data
@@ -503,7 +506,7 @@ export class ItemHandler<IItemType extends Item = Item> implements Item
 			// necessary data
 			...baseData,
 			typeId: this.typeId
-		};
+		} as Partial<IItemType>;
 	}
 
 	public getData(): IItemType
